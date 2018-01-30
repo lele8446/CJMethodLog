@@ -1,6 +1,6 @@
 # CJMethodLog
 ### 功能
-`CJMethodLog`对于Objective-C中的任意类、任意方法，均可以监听其调用时的日志。
+`CJMethodLog`对于Objective-C中的任意类、任意方法，均可监听其调用日志。
 ### 应用场景
 1. 还原用户操作对应的函数调用堆栈
 2. 分析各函数执行时的性能消耗情况
