@@ -37,8 +37,8 @@
 ### 实现
 `CJMethodLog `包含以下两种调用方式，注意！！！！两种调用方法互斥，不可同时调用
 
-* + (void)forwardingClassMethod:(NSArray <NSString *>*)classNameList;
-* + (void)hookClassMethod:(NSArray <NSString *>*)classNameList;
+ + (void)forwardingClassMethod:(NSArray <NSString *>*)classNameList;
+ + (void)hookClassMethod:(NSArray <NSString *>*)classNameList;
 
 #### forwardingClassMethod
 方案一基于runtime的消息转发机制实现，当一个方法进入消息转发会存在以下步骤：
