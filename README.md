@@ -9,8 +9,9 @@
 ### 示例
 下图展示了根据操作`TestViewController`类各函数的调用情况
 <center>
- <img src="http://oz3eqyeso.bkt.clouddn.com/YCMethodLog.gif" width="25%"/>
+ <img src="http://oz3eqyeso.bkt.clouddn.com/YCMethodLog.gif" width="100%"/>
 </center>
+
 ### 使用
 在`-application: didFinishLaunchingWithOptions:`中设置需要监听的类名，建议写在该方法的最开始位置
 
@@ -82,7 +83,7 @@
 
 **原因：**参数或者返回值的获取，都需要预先确定当前值的数据类型，而自定义结构体的类型是无法预知的，这个貌似无解。。。
 
-###更多
+### 更多
 * 解决方案一、方案二的不足
 * 日志收集。当前只是实现了函数调用日志的打印，最终应该实现日志的本地化写入
 * 欢迎各位大神`star``issue`，帮忙解决难题
