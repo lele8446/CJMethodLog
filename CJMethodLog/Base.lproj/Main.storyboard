@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13770" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="ov6-o8-LfN">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13770"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="zgB-pr-UNx">
+            <objects>
+                <navigationController id="ov6-o8-LfN" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="k1J-M6-Yl7">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="xUJ-J3-ntX"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yRy-a5-PUR" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-939.375" y="35.573333333333331"/>
+        </scene>
+        <!--RootView-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="edX-sj-pRY"/>
+                        <viewControllerLayoutGuide type="bottom" id="Gwg-0Q-QjY"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Azf-si-VWb">
+                                <rect key="frame" x="144" y="144" width="86" height="30"/>
+                                <state key="normal" title="   TestView   ">
+                                    <color key="titleColor" red="0.1154624048" green="0.1154624048" blue="0.1154624048" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                        <integer key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="clickTestView:" destination="BYZ-38-t0r" eventType="touchUpInside" id="O97-s6-uf2"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="18d-0h-wVb">
+                                <rect key="frame" x="122" y="218" width="130" height="30"/>
+                                <state key="normal" title="    TestTableView    ">
+                                    <color key="titleColor" red="0.1154624048" green="0.1154624048" blue="0.1154624048" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                        <integer key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="clickTestTableView:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8jd-gH-Ezo"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="18d-0h-wVb" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="2c1-Tq-bsJ"/>
+                            <constraint firstItem="18d-0h-wVb" firstAttribute="top" secondItem="Azf-si-VWb" secondAttribute="bottom" constant="44" id="Sct-2n-vWt"/>
+                            <constraint firstItem="Azf-si-VWb" firstAttribute="top" secondItem="edX-sj-pRY" secondAttribute="bottom" constant="80" id="rzn-Br-305"/>
+                            <constraint firstItem="Azf-si-VWb" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="vwJ-vX-Kj4"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="RootView" id="8Bq-fD-CPc"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-511.25" y="35.573333333333331"/>
+        </scene>
+        <!--TestView-->
+        <scene sceneID="4rk-Hp-rNy">
+            <objects>
+                <viewController storyboardIdentifier="TestViewController" id="8oJ-qM-Mrf" customClass="TestViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="B58-8t-byd"/>
+                        <viewControllerLayoutGuide type="bottom" id="ymZ-s9-o1I"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8fv-eu-jCy">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mjq-QH-aCZ">
+                                <rect key="frame" x="10" y="100" width="355" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="880-aW-kgs"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lAz-3O-xDd">
+                                <rect key="frame" x="123" y="160" width="129" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="XYl-4Z-wzI"/>
+                                </constraints>
+                                <state key="normal" title="    - testMethod1    "/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                        <integer key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="clickTestMethod1:" destination="8oJ-qM-Mrf" eventType="touchUpInside" id="6Dh-6P-U6q"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XAN-vj-IJp">
+                                <rect key="frame" x="120" y="205" width="135" height="30"/>
+                                <state key="normal" title="    - testMethod2:    "/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                        <integer key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="clickTestMethod2:" destination="8oJ-qM-Mrf" eventType="touchUpInside" id="FuR-tx-Gv6"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="y2Q-Kb-imP">
+                                <rect key="frame" x="120" y="250" width="134" height="30"/>
+                                <state key="normal" title="    + managerTest    "/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                        <integer key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="clickManagerTest:" destination="8oJ-qM-Mrf" eventType="touchUpInside" id="hNE-LF-Mub"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="y2Q-Kb-imP" firstAttribute="top" secondItem="XAN-vj-IJp" secondAttribute="bottom" constant="15" id="0Rz-sT-M26"/>
+                            <constraint firstItem="mjq-QH-aCZ" firstAttribute="top" secondItem="8fv-eu-jCy" secondAttribute="top" constant="100" id="5hZ-tV-9wl"/>
+                            <constraint firstAttribute="trailing" secondItem="mjq-QH-aCZ" secondAttribute="trailing" constant="10" id="Db8-ly-oLM"/>
+                            <constraint firstItem="lAz-3O-xDd" firstAttribute="top" secondItem="mjq-QH-aCZ" secondAttribute="bottom" constant="30" id="GNK-IA-qET"/>
+                            <constraint firstItem="y2Q-Kb-imP" firstAttribute="centerX" secondItem="8fv-eu-jCy" secondAttribute="centerX" id="MjP-Hc-Ire"/>
+                            <constraint firstItem="XAN-vj-IJp" firstAttribute="centerX" secondItem="8fv-eu-jCy" secondAttribute="centerX" id="bPP-UM-9m1"/>
+                            <constraint firstItem="XAN-vj-IJp" firstAttribute="top" secondItem="lAz-3O-xDd" secondAttribute="bottom" constant="15" id="eZw-oP-nmK"/>
+                            <constraint firstItem="lAz-3O-xDd" firstAttribute="centerX" secondItem="8fv-eu-jCy" secondAttribute="centerX" id="gfX-4f-v16"/>
+                            <constraint firstItem="mjq-QH-aCZ" firstAttribute="leading" secondItem="8fv-eu-jCy" secondAttribute="leading" constant="10" id="v7i-L9-wYR"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="TestView" id="YR7-33-kgh"/>
+                    <connections>
+                        <outlet property="label" destination="mjq-QH-aCZ" id="xfT-AQ-bhh"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="XHA-E4-xxs" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-76.25" y="35.573333333333331"/>
+        </scene>
+        <!--TestTableView-->
+        <scene sceneID="Kf3-qg-epb">
+            <objects>
+                <viewController storyboardIdentifier="TestTableViewController" id="9kR-3t-Zah" customClass="TestTableViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="wqY-cF-v6H"/>
+                        <viewControllerLayoutGuide type="bottom" id="LRF-1q-TU1"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="5cV-Xx-yMz">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="aME-Jf-q2e">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="9kR-3t-Zah" id="a9d-iY-ut1"/>
+                                    <outlet property="delegate" destination="9kR-3t-Zah" id="cXl-ml-itQ"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="aME-Jf-q2e" secondAttribute="trailing" id="4K3-l1-Kcf"/>
+                            <constraint firstItem="aME-Jf-q2e" firstAttribute="top" secondItem="5cV-Xx-yMz" secondAttribute="top" id="Iwe-pV-434"/>
+                            <constraint firstItem="aME-Jf-q2e" firstAttribute="leading" secondItem="5cV-Xx-yMz" secondAttribute="leading" id="SHO-Ez-70f"/>
+                            <constraint firstItem="LRF-1q-TU1" firstAttribute="top" secondItem="aME-Jf-q2e" secondAttribute="bottom" id="lfx-xq-pj4"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="TestTableView" id="dhm-OU-GK9"/>
+                    <connections>
+                        <outlet property="tableView" destination="aME-Jf-q2e" id="geE-tB-NUy"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Hbk-jQ-Gic" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="333.5" y="35.5"/>
+        </scene>
+    </scenes>
+</document>
