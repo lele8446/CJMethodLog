@@ -91,7 +91,7 @@
 }
 
 - (IBAction)clickTestMethod2:(id)sender {
-    
+    [self viewControllerTest];
 }
 
 - (IBAction)clickManagerTest:(id)sender {

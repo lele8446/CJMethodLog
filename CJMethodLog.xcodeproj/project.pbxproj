@@ -18,6 +18,7 @@
 		B459127C201F16C600B9808D /* CJMethodLog.m in Sources */ = {isa = PBXBuildFile; fileRef = B459127B201F16C600B9808D /* CJMethodLog.m */; };
 		B45912812020191F00B9808D /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B459127E2020191F00B9808D /* TestViewController.m */; };
 		B45912822020191F00B9808D /* TestTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B459127F2020191F00B9808D /* TestTableViewController.m */; };
+		B45912882022EFAD00B9808D /* NSObject+CJMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = B45912872022EFAD00B9808D /* NSObject+CJMessage.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,8 @@
 		B459127E2020191F00B9808D /* TestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
 		B459127F2020191F00B9808D /* TestTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestTableViewController.m; sourceTree = "<group>"; };
 		B45912802020191F00B9808D /* TestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
+		B45912862022EFAD00B9808D /* NSObject+CJMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+CJMessage.h"; sourceTree = "<group>"; };
+		B45912872022EFAD00B9808D /* NSObject+CJMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+CJMessage.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +154,8 @@
 			children = (
 				B459127A201F16C600B9808D /* CJMethodLog.h */,
 				B459127B201F16C600B9808D /* CJMethodLog.m */,
+				B45912862022EFAD00B9808D /* NSObject+CJMessage.h */,
+				B45912872022EFAD00B9808D /* NSObject+CJMessage.m */,
 			);
 			path = CJMethodLog;
 			sourceTree = "<group>";
@@ -288,6 +293,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B45912882022EFAD00B9808D /* NSObject+CJMessage.m in Sources */,
 				B459127C201F16C600B9808D /* CJMethodLog.m in Sources */,
 				B459124C201F148500B9808D /* ViewController.m in Sources */,
 				B4591257201F148500B9808D /* main.m in Sources */,

@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ViewController.h"
 
-@interface TestViewController : UIViewController
+@interface TestViewController : ViewController
 
 + (void)managerTest;
 

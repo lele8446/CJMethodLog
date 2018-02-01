@@ -40,4 +40,8 @@
     [self.navigationController pushViewController:aViewCtr animated:YES];
 }
 
+- (void)viewControllerTest {
+    
+}
+
 @end
