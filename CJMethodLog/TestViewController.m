@@ -86,7 +86,8 @@
 }
 
 - (IBAction)clickTestMethod1:(id)sender {
-    
+    self.label.backgroundColor = [UIColor grayColor];
+    self.label.text = @"更改了文字";
 }
 
 - (IBAction)clickTestMethod2:(id)sender {

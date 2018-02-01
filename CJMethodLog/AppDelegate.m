@@ -17,19 +17,21 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
     
+    /*
+     * 方案一：利用消息转发，hook指定类的调用方法
+     */
 //    [CJMethodLog forwardingClassMethod:@[
 //                                         @"TestViewController",
 //                                         @"TestTableViewController"
 //                                         ]];
-    
+    /*
+     * 方案二：hook指定类的每一个方法
+     */
     [CJMethodLog hookClassMethod:@[
                                    @"TestViewController",
                                    @"TestTableViewController"
                                    ]];
-
-
     return YES;
 }
 

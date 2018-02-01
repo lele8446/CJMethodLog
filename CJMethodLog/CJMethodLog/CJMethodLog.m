@@ -38,6 +38,7 @@ NSString *structName(const char *argumentType);
 //设置方法参数
 BOOL setMethodArguments(va_list argList,NSInvocation *invocation,NSInteger index, char *argumentType);
 BOOL cjlHookMethod(Class cls, SEL originSelector, char *returnType);
+NSInvocation *cjlMethodInvocation(Class cls, SEL originSelector, id target);
 
 #pragma mark - Function implementation
 BOOL isInMainBundle(Class hookClass) {
@@ -159,7 +160,7 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, char *returnT
         NSLog(@"class addMethod fail : %@，%@",cls,str);
         return NO;
     }
-    //替换当前方法的IPM为msgForwardIMP，从而在调用时候触发消息转发
+    //替换当前方法的IMP为msgForwardIMP，从而在调用时候触发消息转发
     class_replaceMethod(cls, originSelector, msgForwardIMP, originTypes);
     
     Method forwardInvocationMethod = class_getInstanceMethod(cls, @selector(forwardInvocation:));
@@ -277,10 +278,95 @@ BOOL setMethodArguments(va_list argList,NSInvocation *invocation,NSInteger index
         else SET_ARGUMENT(void *)
         else SET_ARGUMENT(Class)
         else {
-            CJLNSLog(@"未参数:%s",argumentType);
+            CJLNSLog(@"未知参数:%s",argumentType);
             return NO;
         }
     }
+}
+
+NSInvocation * cjlMethodInvocation(Class cls, SEL originSelector, id target) {
+    NSString *originSelectorStr = NSStringFromSelector(originSelector);
+    SEL newSelecotr = createNewSelector(originSelector);
+    
+    NSMethodSignature *signature = [cls instanceMethodSignatureForSelector:originSelector];
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+    invocation.target = target;
+    invocation.selector = newSelecotr;
+    
+    NSString *targetDescription = [target description];
+    BOOL isInstance = isInstanceType(targetDescription)?YES:NO;
+    Class targetClass = isInstance?[target class]:object_getClass(target);
+    _deep ++;
+    NSMutableString *methodlog = [[NSMutableString alloc]initWithCapacity:3];
+    for (NSInteger deepLevel = 0; deepLevel <= _deep; deepLevel ++) {
+        [methodlog appendString:@"-"];
+    }
+    if (isInstance) {
+        [methodlog appendFormat:@" %s: -%@",class_getName(targetClass),originSelectorStr];
+    }else{
+        [methodlog appendFormat:@" %s: +%@",class_getName(targetClass),originSelectorStr];
+    }
+    CJLNSLog(@"%@",methodlog);
+    
+    return invocation;
+}
+
+//获取方法返回值
+id getReturnValue(NSInvocation *invocation){
+    const char *returnType = invocation.methodSignature.methodReturnType;
+    if (returnType[0] == 'r') {
+        returnType++;
+    }
+#define WRAP_GET_VALUE(type) \
+do { \
+type val = 0; \
+[invocation getReturnValue:&val]; \
+CJLNSLog(@"%@",@(val));\
+return @(val); \
+} while (0)
+    if (strcmp(returnType, @encode(id)) == 0 || strcmp(returnType, @encode(Class)) == 0 || strcmp(returnType, @encode(void (^)(void))) == 0) {
+        __autoreleasing id returnObj;
+        [invocation getReturnValue:&returnObj];
+        return returnObj;
+    } else if (strcmp(returnType, @encode(char)) == 0) {
+        WRAP_GET_VALUE(char);
+    } else if (strcmp(returnType, @encode(int)) == 0) {
+        WRAP_GET_VALUE(int);
+    } else if (strcmp(returnType, @encode(short)) == 0) {
+        WRAP_GET_VALUE(short);
+    } else if (strcmp(returnType, @encode(long)) == 0) {
+        WRAP_GET_VALUE(long);
+    } else if (strcmp(returnType, @encode(long long)) == 0) {
+        WRAP_GET_VALUE(long long);
+    } else if (strcmp(returnType, @encode(unsigned char)) == 0) {
+        WRAP_GET_VALUE(unsigned char);
+    } else if (strcmp(returnType, @encode(unsigned int)) == 0) {
+        WRAP_GET_VALUE(unsigned int);
+    } else if (strcmp(returnType, @encode(unsigned short)) == 0) {
+        WRAP_GET_VALUE(unsigned short);
+    } else if (strcmp(returnType, @encode(unsigned long)) == 0) {
+        WRAP_GET_VALUE(unsigned long);
+    } else if (strcmp(returnType, @encode(unsigned long long)) == 0) {
+        WRAP_GET_VALUE(unsigned long long);
+    } else if (strcmp(returnType, @encode(float)) == 0) {
+        WRAP_GET_VALUE(float);
+    } else if (strcmp(returnType, @encode(double)) == 0) {
+        WRAP_GET_VALUE(double);
+    } else if (strcmp(returnType, @encode(BOOL)) == 0) {
+        WRAP_GET_VALUE(BOOL);
+    } else if (strcmp(returnType, @encode(char *)) == 0) {
+        WRAP_GET_VALUE(const char *);
+    } else if (strcmp(returnType, @encode(void)) == 0) {
+        return @"void";
+    } else {
+        NSUInteger valueSize = 0;
+        NSGetSizeAndAlignment(returnType, &valueSize, NULL);
+        unsigned char valueBytes[valueSize];
+        [invocation getReturnValue:valueBytes];
+        
+        return [NSValue valueWithBytes:valueBytes objCType:returnType];
+    }
+    return nil;
 }
 
 BOOL cjlHookMethod(Class cls, SEL originSelector, char *returnType) {
@@ -301,34 +387,12 @@ BOOL cjlHookMethod(Class cls, SEL originSelector, char *returnType) {
         return NO;
     }
     
-    NSString *returnTypeString = [NSString stringWithUTF8String:returnType];
     // 无返回值的方法
-    if ([returnTypeString isEqualToString:@"v"]) {
+    if (strcmp(returnType, @encode(void)) == 0) {
         
         class_replaceMethod(cls, originSelector, imp_implementationWithBlock(^(id target, ...){
-            NSString *originSelectorStr = NSStringFromSelector(originSelector);
-            SEL newSelecotr = createNewSelector(originSelector);
             
-            NSMethodSignature *signature = [cls instanceMethodSignatureForSelector:originSelector];
-            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-            invocation.target = target;
-            invocation.selector = newSelecotr;
-            
-            NSString *targetDescription = [target description];
-            BOOL isInstance = isInstanceType(targetDescription)?YES:NO;
-            Class targetClass = isInstance?[target class]:object_getClass(target);
-            _deep ++;
-            NSMutableString *methodlog = [[NSMutableString alloc]initWithCapacity:3];
-            for (NSInteger deepLevel = 0; deepLevel <= _deep; deepLevel ++) {
-                [methodlog appendString:@"-"];
-            }
-            if (isInstance) {
-                [methodlog appendFormat:@" %s: -%@",class_getName(targetClass),originSelectorStr];
-            }else{
-                [methodlog appendFormat:@" %s: +%@",class_getName(targetClass),originSelectorStr];
-            }
-            CJLNSLog(@"%@",methodlog);
-            
+            NSInvocation *invocation = cjlMethodInvocation(cls,originSelector,target);
             //参数类型数组
             NSMutableArray *argumentTypeArray = [NSMutableArray arrayWithCapacity:3];
             
@@ -348,7 +412,7 @@ BOOL cjlHookMethod(Class cls, SEL originSelector, char *returnType) {
             while (index < argumentsNum) {
                 NSString *argumentType = argumentTypeArray[index-2];
                 char *typeChar = [argumentType cStringUsingEncoding:NSUTF8StringEncoding];
-                setMethodArguments(argumentList, invocation, index, typeChar);
+                BOOL argumentSet = setMethodArguments(argumentList, invocation, index, typeChar);
                 index ++;
             }
             va_end(argumentList);
@@ -366,8 +430,44 @@ BOOL cjlHookMethod(Class cls, SEL originSelector, char *returnType) {
         
         // TODO: 有返回值的方法
         // 暂未处理
-        class_replaceMethod(cls, originSelector, originIMP, originTypes);
+//        class_replaceMethod(cls, originSelector, originIMP, originTypes);
 //        method_setImplementation(originMethod, originIMP);
+        
+//        class_replaceMethod(cls, originSelector, imp_implementationWithBlock(^(id target, ...){
+//            
+//            NSInvocation *invocation = cjlMethodInvocation(cls,originSelector,target);
+//            //参数类型数组
+//            NSMutableArray *argumentTypeArray = [NSMutableArray arrayWithCapacity:3];
+//            
+//            Method originMethod = class_getInstanceMethod(cls, originSelector);
+//            NSInteger argumentsNum = method_getNumberOfArguments(originMethod);
+//            for(int k = 2 ; k < argumentsNum; k ++) {
+//                char argument[250];
+//                memset(argument, 0, sizeof(argument));
+//                method_getArgumentType(originMethod, k, argument, sizeof(argument));
+//                NSString *argumentString = [NSString stringWithUTF8String:argument];
+//                [argumentTypeArray addObject:argumentString];
+//            }
+//            
+//            int index = 2;
+//            va_list argumentList;
+//            va_start(argumentList, target);
+//            while (index < argumentsNum) {
+//                NSString *argumentType = argumentTypeArray[index-2];
+//                char *typeChar = [argumentType cStringUsingEncoding:NSUTF8StringEncoding];
+//                BOOL argumentSet = setMethodArguments(argumentList, invocation, index, typeChar);
+//                index ++;
+//            }
+//            va_end(argumentList);
+//            
+//            [invocation invokeWithTarget:target];
+//            _deep --;
+//            
+//            if (_deep == -1) {
+//                CJLNSLog(@"\n");
+//            }
+//            return getReturnValue(invocation);
+//        }), originTypes);
     }
     return YES;
 }
