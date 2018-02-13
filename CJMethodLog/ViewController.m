@@ -22,11 +22,11 @@
     // Do any additional setup after loading the view, typically from a nib.
 //    [self test:CGRectMake(2, 2, 2, 2)];
     
-    getTickCount();
-    CFTimeInterval timeInterval1 = CACurrentMediaTime();
-    CFTimeInterval timeInterval2 = CACurrentMediaTime();
-    NSLog(@"timeInterval1 = %@",@(timeInterval1));
-    NSLog(@"timeInterval2 = %@",@(timeInterval2));
+//    getTickCount();
+//    CFTimeInterval timeInterval1 = CACurrentMediaTime();
+//    CFTimeInterval timeInterval2 = CACurrentMediaTime();
+//    NSLog(@"timeInterval1 = %@",@(timeInterval1));
+//    NSLog(@"timeInterval2 = %@",@(timeInterval2));
 }
 
 - (void)test:(CGRect )arg {

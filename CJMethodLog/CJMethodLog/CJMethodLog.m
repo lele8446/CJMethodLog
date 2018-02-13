@@ -14,13 +14,33 @@
 
 #import "CJLogger.h"
 
+@interface CJMethodTimeInfo : NSObject
+@property (nonatomic, copy, readonly) NSString *name;
+@property (nonatomic, assign, readonly) CFTimeInterval timeInterval;
++ (CJMethodTimeInfo *)methodTimeInfoName:(NSString *)name timeInterval:(CFTimeInterval)timeInterval;
+@end
+@implementation CJMethodTimeInfo
++ (CJMethodTimeInfo *)methodTimeInfoName:(NSString *)name timeInterval:(CFTimeInterval)timeInterval {
+    CJMethodTimeInfo *timeInfo = [[CJMethodTimeInfo alloc]initInfoName:name timeInterval:timeInterval];
+    return timeInfo;
+}
+- (instancetype)initInfoName:(NSString *)name timeInterval:(CFTimeInterval)timeInterval {
+    self = [super init];
+    if (self) {
+        _name = name;
+        _timeInterval = timeInterval;
+    }
+    return self;
+}
+@end
+
 typedef void (*_VIMP)(id, SEL, ...);
 typedef id (*_IMP)(id, SEL, ...);
 
 static BOOL _forwardInvocation = NO;/*标识是否为消息转发*/
 static NSMutableArray *_hookedClassList = nil;/*保存已被hook的类名*/
 static NSMutableDictionary *_classMethodMap = nil;/*记录已被hook的类的方法列表*/
-static NSInteger _deep = -1;/*调用方法层级*/
+static NSMutableArray *_methodTimeList = nil;/*保存函数执行时间*/
 
 #pragma mark - Function Define
 BOOL isInMainBundle(Class hookClass);
@@ -28,7 +48,6 @@ BOOL haveHookClass(Class hookClass);
 BOOL isCanHook(Method method, const char *returnType);
 BOOL isInBlackList(NSString *methodName);
 BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, char *returnType);
-
 
 #pragma mark - Function implementation
 
@@ -156,13 +175,27 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, char *returnT
             }else{
                 [methodlog appendFormat:@" %s: +%@",class_getName(targetClass),originSelectorStr];
             }
+            
+            CFTimeInterval timeInterval1 = CACurrentMediaTime();
+            [_methodTimeList addObject:[CJMethodTimeInfo methodTimeInfoName:methodlog timeInterval: timeInterval1]];
+
             CJLNSLog(@"%@ start\n",methodlog);
 //            [[CJLogger getInstance] flush_allocation_stack:methodlog];
             
             [invocation setSelector:createNewSelector(originSelector)];
             [invocation setTarget:target];            
             [invocation invoke];
-            CJLNSLog(@"%@ end\n",methodlog);
+            
+            CJMethodTimeInfo *methodTimeInfo = nil;
+            for (CJMethodTimeInfo *info in _methodTimeList) {
+                if ([info.name isEqual:methodlog]) {
+                    methodTimeInfo = info;
+                }
+            }
+            CFTimeInterval timeInterval2 = CACurrentMediaTime();
+            CJLNSLog(@"%@ end time = %@\n",methodlog,@(timeInterval2-methodTimeInfo.timeInterval));
+            [_methodTimeList removeObject:methodTimeInfo];
+            methodTimeInfo = nil;
             _CJDeep --;
             
         }
@@ -208,6 +241,7 @@ BOOL shouldInterceptMessage(Class cls, SEL selector) {
     dispatch_once(&onceToken, ^{
         _hookedClassList = [NSMutableArray array];
         _classMethodMap = [NSMutableDictionary dictionary];
+        _methodTimeList = [NSMutableArray array];
     });
     [_hookedClassList removeAllObjects];
     [_classMethodMap removeAllObjects];
