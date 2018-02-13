@@ -18,10 +18,14 @@
 		B459127C201F16C600B9808D /* CJMethodLog.m in Sources */ = {isa = PBXBuildFile; fileRef = B459127B201F16C600B9808D /* CJMethodLog.m */; };
 		B45912812020191F00B9808D /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B459127E2020191F00B9808D /* TestViewController.m */; };
 		B45912822020191F00B9808D /* TestTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B459127F2020191F00B9808D /* TestTableViewController.m */; };
+<<<<<<< HEAD
 		B459128C20230A2600B9808D /* BigBang.m in Sources */ = {isa = PBXBuildFile; fileRef = B459128B20230A2600B9808D /* BigBang.m */; };
 		B4EF48DE202C407300754537 /* CJMethodLog+CJMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = B4EF48DD202C407300754537 /* CJMethodLog+CJMessage.m */; };
 		B4EF48E4202D7BC600754537 /* HighSpeedLogger.mm in Sources */ = {isa = PBXBuildFile; fileRef = B4EF48E1202D7BC600754537 /* HighSpeedLogger.mm */; };
 		B4EF48E8202D880800754537 /* CJLogger.mm in Sources */ = {isa = PBXBuildFile; fileRef = B4EF48E7202D880800754537 /* CJLogger.mm */; };
+=======
+		B45912882022EFAD00B9808D /* NSObject+CJMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = B45912872022EFAD00B9808D /* NSObject+CJMessage.m */; };
+>>>>>>> origin/master
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +68,7 @@
 		B459127E2020191F00B9808D /* TestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
 		B459127F2020191F00B9808D /* TestTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestTableViewController.m; sourceTree = "<group>"; };
 		B45912802020191F00B9808D /* TestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
+<<<<<<< HEAD
 		B459128A20230A2600B9808D /* BigBang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigBang.h; sourceTree = "<group>"; };
 		B459128B20230A2600B9808D /* BigBang.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BigBang.m; sourceTree = "<group>"; };
 		B4EF48DC202C407300754537 /* CJMethodLog+CJMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CJMethodLog+CJMessage.h"; sourceTree = "<group>"; };
@@ -72,6 +77,10 @@
 		B4EF48E1202D7BC600754537 /* HighSpeedLogger.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HighSpeedLogger.mm; sourceTree = "<group>"; };
 		B4EF48E6202D880800754537 /* CJLogger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CJLogger.h; sourceTree = "<group>"; };
 		B4EF48E7202D880800754537 /* CJLogger.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CJLogger.mm; sourceTree = "<group>"; };
+=======
+		B45912862022EFAD00B9808D /* NSObject+CJMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+CJMessage.h"; sourceTree = "<group>"; };
+		B45912872022EFAD00B9808D /* NSObject+CJMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+CJMessage.m"; sourceTree = "<group>"; };
+>>>>>>> origin/master
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,10 +174,15 @@
 			children = (
 				B459127A201F16C600B9808D /* CJMethodLog.h */,
 				B459127B201F16C600B9808D /* CJMethodLog.m */,
+<<<<<<< HEAD
 				B4EF48DC202C407300754537 /* CJMethodLog+CJMessage.h */,
 				B4EF48DD202C407300754537 /* CJMethodLog+CJMessage.m */,
 				B4EF48E6202D880800754537 /* CJLogger.h */,
 				B4EF48E7202D880800754537 /* CJLogger.mm */,
+=======
+				B45912862022EFAD00B9808D /* NSObject+CJMessage.h */,
+				B45912872022EFAD00B9808D /* NSObject+CJMessage.m */,
+>>>>>>> origin/master
 			);
 			path = CJMethodLog;
 			sourceTree = "<group>";
@@ -324,6 +338,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B45912882022EFAD00B9808D /* NSObject+CJMessage.m in Sources */,
 				B459127C201F16C600B9808D /* CJMethodLog.m in Sources */,
 				B459124C201F148500B9808D /* ViewController.m in Sources */,
 				B4591257201F148500B9808D /* main.m in Sources */,

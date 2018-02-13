@@ -8,6 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+<<<<<<< HEAD
+=======
+FOUNDATION_EXTERN BOOL shouldInterceptMessage(Class cls, SEL selector);
+
+>>>>>>> origin/master
 /**
  任意类，任意方法的调用日志监听系统，包含以下两种调用方式：
   + forwardingClassMethod:

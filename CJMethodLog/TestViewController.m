@@ -91,7 +91,11 @@
 }
 
 - (IBAction)clickTestMethod2:(id)sender {
+<<<<<<< HEAD
     [TestViewController managerTest];
+=======
+    [self viewControllerTest];
+>>>>>>> origin/master
 }
 
 - (IBAction)clickManagerTest:(id)sender {
