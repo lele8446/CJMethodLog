@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ViewController.h"
 
-@interface TestViewController : ViewController
+@interface TestViewController : UIViewController
 
 + (void)managerTest;
 

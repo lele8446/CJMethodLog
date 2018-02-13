@@ -19,11 +19,8 @@ typedef id (*_IMP)(id, SEL, ...);
 
 static BOOL _forwardInvocation = NO;/*标识是否为消息转发*/
 static NSMutableArray *_hookedClassList = nil;/*保存已被hook的类名*/
-<<<<<<< HEAD
-=======
 static NSMutableDictionary *_classMethodMap = nil;/*记录已被hook的类的方法列表*/
 static NSInteger _deep = -1;/*调用方法层级*/
->>>>>>> origin/master
 
 #pragma mark - Function Define
 BOOL isInMainBundle(Class hookClass);
@@ -138,7 +135,6 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, char *returnT
     //替换当前方法的IMP为msgForwardIMP，从而在调用时候触发消息转发
     class_replaceMethod(cls, originSelector, msgForwardIMP, originTypes);
     
-<<<<<<< HEAD
     Method forwardInvocationMethod = class_getInstanceMethod(cls, @selector(forwardInvocation:));
     _VIMP originMethod_IMP = (_VIMP)method_getImplementation(forwardInvocationMethod);
     method_setImplementation(forwardInvocationMethod, imp_implementationWithBlock(^(id target, NSInvocation *invocation){
@@ -179,62 +175,6 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, char *returnT
 //            [[CJLogger getInstance] flush_allocation_stack:@"\n"];
         }
     }));
-=======
-//    Method forwardingTargetMethod = class_getInstanceMethod(cls, @selector(forwardingTargetForSelector:));
-////    _IMP originMethod_IMP = (_IMP)method_getImplementation(forwardingTargetMethod);
-//    method_setImplementation(forwardingTargetMethod, imp_implementationWithBlock(^(id target, SEL aSelector){
-//        CJLNSLog(@"target = %@",target);
-//        return [[WZQMessageStub alloc] initWithTarget:target selector:aSelector];
-    
-//        NSString *targetDescription = [target description];
-//        BOOL isInstance = isInstanceType(targetDescription)?YES:NO;
-//        Class targetClass = isInstance?[target class]:object_getClass(target);
-//        if (class_respondsToSelector(targetClass, originSelector)) {
-//            return [[WZQMessageStub alloc] initWithTarget:target selector:aSelector];
-//        }else{
-//            return (id)originMethod_IMP(target,@selector(forwardingTargetForSelector:),aSelector);
-//        }
-
-//    }));
-    
-//    Method forwardInvocationMethod = class_getInstanceMethod(cls, @selector(forwardInvocation:));
-//    _VIMP originMethod_IMP = (_VIMP)method_getImplementation(forwardInvocationMethod);
-//    method_setImplementation(forwardInvocationMethod, imp_implementationWithBlock(^(id target, NSInvocation *invocation){
-//
-//        SEL originSelector = invocation.selector;
-//        NSString *targetDescription = [target description];
-//        BOOL isInstance = isInstanceType(targetDescription)?YES:NO;
-//        Class targetClass = isInstance?[target class]:object_getClass(target);
-//        if (class_respondsToSelector(targetClass, originSelector)) {
-//
-//            _deep ++;
-//            NSString *originSelectorStr = NSStringFromSelector(originSelector);
-//            NSMutableString *methodlog = [[NSMutableString alloc]initWithCapacity:3];
-//            for (NSInteger deepLevel = 0; deepLevel <= _deep; deepLevel ++) {
-//                [methodlog appendString:@"-"];
-//            }
-//            if (isInstance) {
-//                [methodlog appendFormat:@" %s: -%@",class_getName(targetClass),originSelectorStr];
-//            }else{
-//                [methodlog appendFormat:@" %s: +%@",class_getName(targetClass),originSelectorStr];
-//            }
-//            CJLNSLog(@"%@",methodlog);
-//
-//            [invocation setSelector:createNewSelector(originSelector)];
-//            [invocation setTarget:target];
-//            [invocation invoke];
-//            _deep --;
-//
-//        }
-//        //如果target实例本身已经实现了对无法执行的方法的消息转发(forwardInvocation:)，则这里要还原其本来的实现
-//        else {
-//            originMethod_IMP(target,@selector(forwardInvocation:),invocation);
-//        }
-//        if (_deep == -1) {
-//            CJLNSLog(@"\n");
-//        }
-//    }));
->>>>>>> origin/master
     return YES;
 }
 
@@ -295,9 +235,9 @@ BOOL shouldInterceptMessage(Class cls, SEL selector) {
     Class metaClass = object_getClass(hookClass);
     [self enumerateClassMethods:metaClass];
     
-    //hook 父类方法
-    Class superClass = class_getSuperclass(hookClass);
-    [self hookClassMethod:superClass config:NO];
+//    //hook 父类方法
+//    Class superClass = class_getSuperclass(hookClass);
+//    [self hookClassMethod:superClass config:NO];
 }
 
 + (void)enumerateClassMethods:(Class)hookClass {

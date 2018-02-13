@@ -23,33 +23,18 @@
      * 方案一：利用消息转发，hook指定类的调用方法
      */
     [CJMethodLog forwardingClassMethod:@[
-<<<<<<< HEAD
 //                                         @"ViewController",
                                          @"TestViewController",
-//                                         @"TestTableViewController"
-=======
-                                         @"ViewController",
-                                         @"TestViewController",
                                          @"TestTableViewController"
->>>>>>> origin/master
                                          ]];
     /*
      * 方案二：hook指定类的每一个方法
      */
 //    [CJMethodLog hookClassMethod:@[
-<<<<<<< HEAD
 //                                   @"ViewController",
 //                                   @"TestViewController",
 //                                   @"TestTableViewController"
 //                                   ]];
-    
-//    [BigBang hookClass:@"ViewController"];
-//    [BigBang hookClass:@"TestViewController"];
-=======
-//                                   @"TestViewController",
-//                                   @"TestTableViewController"
-//                                   ]];
->>>>>>> origin/master
     return YES;
 }
 

@@ -50,7 +50,6 @@
     [self.navigationController pushViewController:aViewCtr animated:YES];
 }
 
-<<<<<<< HEAD
 uint64_t getTickCount(void) {
     static mach_timebase_info_data_t sTimebaseInfo;
     uint64_t machTime = mach_absolute_time();
@@ -64,10 +63,7 @@ uint64_t getTickCount(void) {
     uint64_t millis = ((machTime / 1000000) * sTimebaseInfo.numer) / sTimebaseInfo.denom;
     NSLog(@"millis = %@",@(millis));
     return millis;
-=======
-- (void)viewControllerTest {
-    
->>>>>>> origin/master
+
 }
 
 @end
