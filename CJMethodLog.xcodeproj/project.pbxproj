@@ -18,6 +18,10 @@
 		B459127C201F16C600B9808D /* CJMethodLog.m in Sources */ = {isa = PBXBuildFile; fileRef = B459127B201F16C600B9808D /* CJMethodLog.m */; };
 		B45912812020191F00B9808D /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B459127E2020191F00B9808D /* TestViewController.m */; };
 		B45912822020191F00B9808D /* TestTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B459127F2020191F00B9808D /* TestTableViewController.m */; };
+		B459128C20230A2600B9808D /* BigBang.m in Sources */ = {isa = PBXBuildFile; fileRef = B459128B20230A2600B9808D /* BigBang.m */; };
+		B4EF48DE202C407300754537 /* CJMethodLog+CJMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = B4EF48DD202C407300754537 /* CJMethodLog+CJMessage.m */; };
+		B4EF48E4202D7BC600754537 /* HighSpeedLogger.mm in Sources */ = {isa = PBXBuildFile; fileRef = B4EF48E1202D7BC600754537 /* HighSpeedLogger.mm */; };
+		B4EF48E8202D880800754537 /* CJLogger.mm in Sources */ = {isa = PBXBuildFile; fileRef = B4EF48E7202D880800754537 /* CJLogger.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +64,14 @@
 		B459127E2020191F00B9808D /* TestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
 		B459127F2020191F00B9808D /* TestTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestTableViewController.m; sourceTree = "<group>"; };
 		B45912802020191F00B9808D /* TestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
+		B459128A20230A2600B9808D /* BigBang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigBang.h; sourceTree = "<group>"; };
+		B459128B20230A2600B9808D /* BigBang.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BigBang.m; sourceTree = "<group>"; };
+		B4EF48DC202C407300754537 /* CJMethodLog+CJMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CJMethodLog+CJMessage.h"; sourceTree = "<group>"; };
+		B4EF48DD202C407300754537 /* CJMethodLog+CJMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "CJMethodLog+CJMessage.m"; sourceTree = "<group>"; };
+		B4EF48E0202D7BC600754537 /* HighSpeedLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HighSpeedLogger.h; sourceTree = "<group>"; };
+		B4EF48E1202D7BC600754537 /* HighSpeedLogger.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HighSpeedLogger.mm; sourceTree = "<group>"; };
+		B4EF48E6202D880800754537 /* CJLogger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CJLogger.h; sourceTree = "<group>"; };
+		B4EF48E7202D880800754537 /* CJLogger.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CJLogger.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +122,8 @@
 		B4591246201F148500B9808D /* CJMethodLog */ = {
 			isa = PBXGroup;
 			children = (
+				B4EF48DF202D7BC600754537 /* OOM */,
+				B459128920230A2600B9808D /* BigBang */,
 				B4591279201F16B800B9808D /* CJMethodLog */,
 				B4591247201F148500B9808D /* AppDelegate.h */,
 				B4591248201F148500B9808D /* AppDelegate.m */,
@@ -151,8 +165,30 @@
 			children = (
 				B459127A201F16C600B9808D /* CJMethodLog.h */,
 				B459127B201F16C600B9808D /* CJMethodLog.m */,
+				B4EF48DC202C407300754537 /* CJMethodLog+CJMessage.h */,
+				B4EF48DD202C407300754537 /* CJMethodLog+CJMessage.m */,
+				B4EF48E6202D880800754537 /* CJLogger.h */,
+				B4EF48E7202D880800754537 /* CJLogger.mm */,
 			);
 			path = CJMethodLog;
+			sourceTree = "<group>";
+		};
+		B459128920230A2600B9808D /* BigBang */ = {
+			isa = PBXGroup;
+			children = (
+				B459128A20230A2600B9808D /* BigBang.h */,
+				B459128B20230A2600B9808D /* BigBang.m */,
+			);
+			path = BigBang;
+			sourceTree = "<group>";
+		};
+		B4EF48DF202D7BC600754537 /* OOM */ = {
+			isa = PBXGroup;
+			children = (
+				B4EF48E0202D7BC600754537 /* HighSpeedLogger.h */,
+				B4EF48E1202D7BC600754537 /* HighSpeedLogger.mm */,
+			);
+			path = OOM;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -291,8 +327,12 @@
 				B459127C201F16C600B9808D /* CJMethodLog.m in Sources */,
 				B459124C201F148500B9808D /* ViewController.m in Sources */,
 				B4591257201F148500B9808D /* main.m in Sources */,
+				B4EF48E4202D7BC600754537 /* HighSpeedLogger.mm in Sources */,
+				B4EF48E8202D880800754537 /* CJLogger.mm in Sources */,
 				B45912822020191F00B9808D /* TestTableViewController.m in Sources */,
 				B4591249201F148500B9808D /* AppDelegate.m in Sources */,
+				B4EF48DE202C407300754537 /* CJMethodLog+CJMessage.m in Sources */,
+				B459128C20230A2600B9808D /* BigBang.m in Sources */,
 				B45912812020191F00B9808D /* TestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -457,7 +497,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XNH4LYVJV3;
 				INFOPLIST_FILE = CJMethodLog/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = CJL.CJMethodLog;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -470,7 +512,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XNH4LYVJV3;
 				INFOPLIST_FILE = CJMethodLog/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = CJL.CJMethodLog;
 				PRODUCT_NAME = "$(TARGET_NAME)";

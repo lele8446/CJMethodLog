@@ -91,12 +91,16 @@
 }
 
 - (IBAction)clickTestMethod2:(id)sender {
-    
+    [TestViewController managerTest];
 }
 
 - (IBAction)clickManagerTest:(id)sender {
-    [TestViewController managerTest];
+    
 //    [self test];
+    NSInteger i = 0;
+    for (; i<100; i++) {
+        [self clickTestMethod2:nil];
+    }
 }
 
 + (void)managerTest {

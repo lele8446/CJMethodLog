@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "CJMethodLog.h"
+#import "BigBang.h"
 
 @interface AppDelegate ()
 
@@ -21,17 +22,22 @@
     /*
      * 方案一：利用消息转发，hook指定类的调用方法
      */
-//    [CJMethodLog forwardingClassMethod:@[
-//                                         @"TestViewController",
+    [CJMethodLog forwardingClassMethod:@[
+//                                         @"ViewController",
+                                         @"TestViewController",
 //                                         @"TestTableViewController"
-//                                         ]];
+                                         ]];
     /*
      * 方案二：hook指定类的每一个方法
      */
-    [CJMethodLog hookClassMethod:@[
-                                   @"TestViewController",
-                                   @"TestTableViewController"
-                                   ]];
+//    [CJMethodLog hookClassMethod:@[
+//                                   @"ViewController",
+//                                   @"TestViewController",
+//                                   @"TestTableViewController"
+//                                   ]];
+    
+//    [BigBang hookClass:@"ViewController"];
+//    [BigBang hookClass:@"TestViewController"];
     return YES;
 }
 
