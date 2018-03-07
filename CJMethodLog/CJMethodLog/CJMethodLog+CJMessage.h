@@ -46,10 +46,10 @@ FOUNDATION_EXPORT SEL createNewSelector(SEL originalSelector);
 /**
  判断是否为实例对象
 
- @param str 类描述
+ @param cls 判断类
  @return BOOL
  */
-FOUNDATION_EXPORT BOOL isInstanceType(NSString *str);
+FOUNDATION_EXPORT BOOL isInstanceType(Class cls);
 
 /**
  根据SEL生成NSInvocation实例

@@ -8,29 +8,43 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_OPTIONS (NSUInteger, CJLogOptions) {
+    /**
+     * 默认只记录执行函数名称
+     */
+    CJLogDefault = 1<<0,
+    
+    /**
+     * 函数执行耗时
+     */
+    CJLogMethodTimer = 1<<1,
+    
+    /**
+     * 函数参数（未实现）
+     */
+    CJLogMethodArgs = 1<<2,
+    
+    /**
+     * 函数返回值（未实现）
+     */
+    CJLogMethodReturnValue = 1<<3,
+};
+
 /**
- 任意类，任意方法的调用日志监听系统，包含以下两种调用方式：
-  + forwardingClassMethod:
-  + hookClassMethod:
- 注意！！！！两种调用方法互斥，不可同时调用
+ * Objective-C任意类，任意方法的调用日志监听系统
  */
 @interface CJMethodLog : NSObject
 
 /**
- * 基于消息转发（forwardInvocation:）实现对指定类的方法调用监听
+ * 基于消息转发（forwardInvocation:）实现对指定类的函数调用监听
  * 注意！！！所有设置的hook类不能存在继承关系
  *
  * @param classNameList 需要hook的类名
+ * @param options       日志选项
+ * @param logFileName   日志文件名（可为nil，默认格式：CJLog_yyyyMMdd_HH_mm_ss.txt）
  */
-+ (void)forwardingClassMethod:(NSArray <NSString *>*)classNameList;
++ (void)forwardingClasses:(NSArray <NSString *>*)classNameList logOptions:(CJLogOptions)options logFileName:(NSString *)logFileName;
 
 
-//TODO: 未完全实现
-///**
-// 监听指定类的方法调用
-//
-// @param classNameList 需要hook的类名
-// */
-//+ (void)hookClassMethod:(NSArray <NSString *>*)classNameList;
 
 @end

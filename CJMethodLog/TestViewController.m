@@ -7,7 +7,6 @@
 //
 
 #import "TestViewController.h"
-#import <UserNotifications/UserNotifications.h>
 
 @interface TestViewController ()
 @property (nonatomic, weak)IBOutlet UILabel *label;

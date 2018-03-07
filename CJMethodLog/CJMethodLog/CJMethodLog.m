@@ -14,42 +14,29 @@
 
 #import "CJLogger.h"
 
-@interface CJMethodTimeInfo : NSObject
-@property (nonatomic, copy, readonly) NSString *name;
-@property (nonatomic, assign, readonly) CFTimeInterval timeInterval;
-+ (CJMethodTimeInfo *)methodTimeInfoName:(NSString *)name timeInterval:(CFTimeInterval)timeInterval;
-@end
-@implementation CJMethodTimeInfo
-+ (CJMethodTimeInfo *)methodTimeInfoName:(NSString *)name timeInterval:(CFTimeInterval)timeInterval {
-    CJMethodTimeInfo *timeInfo = [[CJMethodTimeInfo alloc]initInfoName:name timeInterval:timeInterval];
-    return timeInfo;
-}
-- (instancetype)initInfoName:(NSString *)name timeInterval:(CFTimeInterval)timeInterval {
-    self = [super init];
-    if (self) {
-        _name = name;
-        _timeInterval = timeInterval;
-    }
-    return self;
-}
-@end
-
 typedef void (*_VIMP)(id, SEL, ...);
 typedef id (*_IMP)(id, SEL, ...);
 
-static BOOL _forwardInvocation = NO;/*标识是否为消息转发*/
+static NSString *_logFileName = nil;/*沙盒文件夹名称*/
 static NSMutableArray *_hookedClassList = nil;/*保存已被hook的类名*/
-static NSMutableDictionary *_classMethodMap = nil;/*记录已被hook的类的方法列表*/
-static NSMutableArray *_methodTimeList = nil;/*保存函数执行时间*/
+static NSMutableDictionary *_hookClassMethodDic = nil;/*记录已被hook的类的方法列表*/
+static CJLogger *_logger;
 
 #pragma mark - Function Define
-BOOL isInMainBundle(Class hookClass);
+BOOL isInMainBundle(Class hookClass);/*判断是否为自定义类*/
 BOOL haveHookClass(Class hookClass);
-BOOL isCanHook(Method method, const char *returnType);
-BOOL isInBlackList(NSString *methodName);
-BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, char *returnType);
+BOOL enableHook(Method method, const char *returnType);
+BOOL inBlackList(NSString *methodName);
+BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, char *returnType, CJLogOptions options);
 
 #pragma mark - Function implementation
+
+CJLogger *logger() {
+    if (!_logger) {
+        _logger = [[CJLogger alloc]initWithFileName:_logFileName];
+    }
+    return _logger;
+}
 
 BOOL isInMainBundle(Class hookClass) {
     BOOL inMainBundle = NO;
@@ -65,17 +52,17 @@ BOOL haveHookClass(Class hookClass) {
     return ([_hookedClassList containsObject:className]);
 }
 
-BOOL isCanHook(Method method, const char *returnType) {
+BOOL enableHook(Method method, const char *returnType) {
     //若在黑名单中则不处理
     NSString *selectorName = NSStringFromSelector(method_getName(method));
-    if (isInBlackList(selectorName)) return NO;
+    if (inBlackList(selectorName)) return NO;
     
     if ([selectorName rangeOfString:_CJMethodPrefix].location != NSNotFound) return NO;
     
     return YES;
 }
 
-BOOL isInBlackList(NSString *methodName) {
+BOOL inBlackList(NSString *methodName) {
     static NSArray *defaultBlackList = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -117,7 +104,7 @@ BOOL isInBlackList(NSString *methodName) {
     return ([defaultBlackList containsObject:methodName]);
 }
 
-BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, char *returnType) {
+BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, char *returnType, CJLogOptions options) {
     Method originMethod = class_getInstanceMethod(cls, originSelector);
     if (originMethod == nil) {
         return NO;
@@ -159,8 +146,7 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, char *returnT
     method_setImplementation(forwardInvocationMethod, imp_implementationWithBlock(^(id target, NSInvocation *invocation){
         
         SEL originSelector = invocation.selector;
-        NSString *targetDescription = [target description];
-        BOOL isInstance = isInstanceType(targetDescription)?YES:NO;
+        BOOL isInstance = isInstanceType(target);
         Class targetClass = isInstance?[target class]:object_getClass(target);
         if (class_respondsToSelector(targetClass, originSelector)) {
             
@@ -170,32 +156,48 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, char *returnT
             for (NSInteger deepLevel = 0; deepLevel <= _CJDeep; deepLevel ++) {
                 [methodlog appendString:@"-"];
             }
-            if (isInstance) {
-                [methodlog appendFormat:@" %s: -%@",class_getName(targetClass),originSelectorStr];
-            }else{
-                [methodlog appendFormat:@" %s: +%@",class_getName(targetClass),originSelectorStr];
+            
+            [methodlog appendFormat:@" <%@> ",targetClass];
+            
+            CFTimeInterval startTimeInterval = 0;
+            BOOL logTimer = NO;
+            if (options & CJLogMethodTimer) {
+                logTimer = YES;
+                //TODO:参数处理
+                [methodlog appendFormat:@" begin: "];
+                startTimeInterval = CACurrentMediaTime();
             }
             
-            CFTimeInterval timeInterval1 = CACurrentMediaTime();
-            [_methodTimeList addObject:[CJMethodTimeInfo methodTimeInfoName:methodlog timeInterval: timeInterval1]];
-
-            CJLNSLog(@"%@ start\n",methodlog);
-//            [[CJLogger getInstance] flush_allocation_stack:methodlog];
+            if (options & CJLogMethodArgs) {
+                //TODO:调用方法拼接参数处理
+            }
+            
+            
+            if (isInstance) {
+                [methodlog appendFormat:@" -%@",originSelectorStr];
+            }else{
+                [methodlog appendFormat:@" +%@",originSelectorStr];
+            }
+            
+            if (options & CJLogMethodReturnValue) {
+                //TODO:函数返回值
+            }
+            
+            CJLNSLog(@"%@",methodlog);
+            [logger() flushAllocationStack:[NSString stringWithFormat:@"%@\n",methodlog]];
             
             [invocation setSelector:createNewSelector(originSelector)];
             [invocation setTarget:target];            
             [invocation invoke];
             
-            CJMethodTimeInfo *methodTimeInfo = nil;
-            for (CJMethodTimeInfo *info in _methodTimeList) {
-                if ([info.name isEqual:methodlog]) {
-                    methodTimeInfo = info;
-                }
+            if (logTimer) {
+                [methodlog setString:[methodlog stringByReplacingOccurrencesOfString:@"begin: " withString:@"finish:"]];
+                CFTimeInterval endTimeInterval = CACurrentMediaTime();
+                [methodlog appendFormat:@" ; time=%f",(endTimeInterval-startTimeInterval)];
+                CJLNSLog(@"%@",methodlog);
+                [logger() flushAllocationStack:[NSString stringWithFormat:@"%@\n",methodlog]];
             }
-            CFTimeInterval timeInterval2 = CACurrentMediaTime();
-            CJLNSLog(@"%@ end time = %@\n",methodlog,@(timeInterval2-methodTimeInfo.timeInterval));
-            [_methodTimeList removeObject:methodTimeInfo];
-            methodTimeInfo = nil;
+
             _CJDeep --;
             
         }
@@ -204,8 +206,7 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, char *returnT
             originMethod_IMP(target,@selector(forwardInvocation:),invocation);
         }
         if (_CJDeep == -1) {
-            CJLNSLog(@"\n");
-//            [[CJLogger getInstance] flush_allocation_stack:@"\n"];
+            [logger() flushAllocationStack:@"\n"];
         }
     }));
     return YES;
@@ -213,72 +214,84 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, char *returnT
 
 
 BOOL shouldInterceptMessage(Class cls, SEL selector) {
-    NSArray *methodList = [_classMethodMap objectForKey:NSStringFromClass(cls)];
+    NSArray *methodList = [_hookClassMethodDic objectForKey:NSStringFromClass(cls)];
     return ([methodList containsObject:NSStringFromSelector(selector)]);
 }
 
 #pragma mark - CJMethodLog implementation
 @implementation CJMethodLog
 
-+ (void)forwardingClassMethod:(NSArray <NSString *>*)classNameList {
-    [self commonInstall:YES];
++ (void)forwardingClasses:(NSArray <NSString *>*)classNameList logOptions:(CJLogOptions)options logFileName:(NSString *)logFileName {
+    _logFileName = logFileName;
+    [self forwardInvocationCommonInstall:YES];
     for (NSString *className in classNameList) {
         Class hookClass = NSClassFromString(className);
-        [self hookClassMethod:hookClass config:YES];
+        [self hookClasses:hookClass forwardMsg:YES fromConfig:YES logOptions:options];
     }
 }
 
-+ (void)hookClassMethod:(NSArray <NSString *>*)classNameList {
-    [self commonInstall:NO];
++ (void)hookClasses:(NSArray <NSString *>*)classNameList logOptions:(CJLogOptions)options {
+    [self forwardInvocationCommonInstall:NO];
     for (NSString *className in classNameList) {
         Class hookClass = NSClassFromString(className);
-        [self hookClassMethod:hookClass config:YES];
+        [self hookClasses:hookClass forwardMsg:NO fromConfig:YES logOptions:options];
     }
 }
 
-+ (void)commonInstall:(BOOL)forwardInvocation {
++ (void)forwardInvocationCommonInstall:(BOOL)forwardInvocation {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _hookedClassList = [NSMutableArray array];
-        _classMethodMap = [NSMutableDictionary dictionary];
-        _methodTimeList = [NSMutableArray array];
+        _hookClassMethodDic = [NSMutableDictionary dictionary];
     });
     [_hookedClassList removeAllObjects];
-    [_classMethodMap removeAllObjects];
-    _forwardInvocation = forwardInvocation;
+    [_hookClassMethodDic removeAllObjects];
 }
 
-+ (void)hookClassMethod:(Class)hookClass config:(BOOL)config {
+/**
+ hook 指定类方法
+
+ @param hookClass  指定类
+ @param forwardMsg 是否采用消息转发机制
+ @param fromConfig 指定类是否从配置获取
+ @param options    记录日志选项
+ */
++ (void)hookClasses:(Class)hookClass forwardMsg:(BOOL)forwardMsg fromConfig:(BOOL)fromConfig logOptions:(CJLogOptions)options {
     if (!hookClass) return;
     if (haveHookClass(hookClass)) return;
     
-    if (config) {
-        [self enumerateClassMethods:hookClass];
-        [self enumerateMetaClassMethods:hookClass];
-        
+    if (fromConfig) {
+        [self enumerateMethods:hookClass forwardMsg:forwardMsg logOptions:options];
     }else{
         if (isInMainBundle(hookClass)) {
-            [self enumerateClassMethods:hookClass];
-            [self enumerateMetaClassMethods:hookClass];
+            [self enumerateMethods:hookClass forwardMsg:forwardMsg logOptions:options];
         }
     }
 }
 
-+ (void)enumerateMetaClassMethods:(Class)hookClass {
-    //获取元类，处理类方法。object_getClass获取的isa指针即是元类
-    Class metaClass = object_getClass(hookClass);
-    [self enumerateClassMethods:metaClass];
-    
-//    //hook 父类方法
-//    Class superClass = class_getSuperclass(hookClass);
-//    [self hookClassMethod:superClass config:NO];
++ (void)enumerateMethods:(Class)hookClass forwardMsg:(BOOL)forwardMsg logOptions:(CJLogOptions)options {
+    [self enumerateClassMethods:hookClass forwardMsg:forwardMsg logOptions:options];
+    [self enumerateMetaClassMethods:hookClass forwardMsg:forwardMsg logOptions:options];
+    [self enumerateSuperclassMethods:hookClass forwardMsg:forwardMsg logOptions:options];
 }
 
-+ (void)enumerateClassMethods:(Class)hookClass {
++ (void)enumerateMetaClassMethods:(Class)hookClass forwardMsg:(BOOL)forwardMsg logOptions:(CJLogOptions)options {
+    //获取元类，处理类方法。object_getClass获取的isa指针即是元类
+    Class metaClass = object_getClass(hookClass);
+    [self enumerateClassMethods:metaClass forwardMsg:forwardMsg logOptions:options];
+}
+
++ (void)enumerateSuperclassMethods:(Class)hookClass forwardMsg:(BOOL)forwardMsg logOptions:(CJLogOptions)options {
+//    //hook 父类方法
+//    Class superClass = class_getSuperclass(hookClass);
+//    [self hookClasses:superClass forwardMsg:forwardMsg fromConfig:NO logOptions:options];
+}
+
++ (void)enumerateClassMethods:(Class)hookClass forwardMsg:(BOOL)forwardMsg logOptions:(CJLogOptions)options {
     
     NSString *hookClassName = NSStringFromClass(hookClass);
     
-    NSArray *hookClassMethodList = [_classMethodMap objectForKey:hookClassName];
+    NSArray *hookClassMethodList = [_hookClassMethodDic objectForKey:hookClassName];
     NSMutableArray *methodList = [NSMutableArray arrayWithArray:hookClassMethodList];
     
     unsigned int outCount;
@@ -289,13 +302,13 @@ BOOL shouldInterceptMessage(Class cls, SEL selector) {
         SEL selector = method_getName(tempMethod);
         char *returnType = method_copyReturnType(tempMethod);
         
-        if (_forwardInvocation) {
+        if (forwardMsg) {
             /*
              * 方案一：利用消息转发，hook forwardInvocation: 方法
              */
-            BOOL canHook = isCanHook(tempMethod, returnType);
+            BOOL canHook = enableHook(tempMethod, returnType);
             if (canHook) {
-                forwardInvocationReplaceMethod(hookClass, selector, returnType);
+                forwardInvocationReplaceMethod(hookClass, selector, returnType, options);
             }
         }else{
             /*
@@ -310,7 +323,7 @@ BOOL shouldInterceptMessage(Class cls, SEL selector) {
     free(methods);
     
     [_hookedClassList addObject:hookClassName];
-    [_classMethodMap setObject:methodList forKey:hookClassName];
+    [_hookClassMethodDic setObject:methodList forKey:hookClassName];
 }
 
 @end

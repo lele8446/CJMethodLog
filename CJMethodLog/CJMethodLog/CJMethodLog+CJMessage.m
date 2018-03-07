@@ -36,8 +36,8 @@ FOUNDATION_EXPORT SEL createNewSelector(SEL originalSelector) {
     return newSelector;
 }
 
-FOUNDATION_EXPORT BOOL isInstanceType(NSString *str) {
-    return ([str hasPrefix:@"<"] && [str hasSuffix:@">"]);
+FOUNDATION_EXPORT BOOL isInstanceType(Class cls) {
+    return !(cls == [cls class]);
 }
 
 

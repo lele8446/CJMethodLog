@@ -48,9 +48,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 9) {
-        [[CJLogger getInstance] stopFlush];
-    }
+
 }
 
 

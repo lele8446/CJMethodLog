@@ -6,13 +6,25 @@
 //  Copyright © 2018年 ChiJinLian. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#ifndef CJLogger_h
+#define CJLogger_h
 
+#import <Foundation/Foundation.h>
+#import <malloc/malloc.h>
+
+static NSString *CJLogDetector = @"CJLogDetector";/*沙盒文件夹名称*/
 
 @interface CJLogger : NSObject
 
-+ (CJLogger *)getInstance;
-- (void)flush_allocation_stack:(NSString *)log;
+- (id)initWithFileName:(NSString *)fileName;
+
+- (void)flushAllocationStack:(NSString *)log;
 
 - (void)stopFlush;
+
+
 @end
+
+#endif /* CJLogger_h */
+
+
