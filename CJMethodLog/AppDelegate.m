@@ -7,7 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import "CJMethodLog.h"
 
 @interface AppDelegate ()
 
@@ -17,18 +16,6 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
-    /*
-     * 方案一：利用消息转发，hook指定类的调用方法
-     */
-    [CJMethodLog forwardingClasses:@[
-//                                         @"ViewController",
-                                     @"TestViewController",
-                                     @"TestTableViewController"
-                                     ]
-                        logOptions:CJLogMethodTimer|CJLogMethodArgs
-                       logFileName:nil];
-
     return YES;
 }
 

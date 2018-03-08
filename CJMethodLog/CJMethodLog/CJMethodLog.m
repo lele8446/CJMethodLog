@@ -134,7 +134,7 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, char *returnT
     BOOL addSucess = class_addMethod(cls, newSelecotr, originIMP, originTypes);
     if (!addSucess) {
         NSString *str = NSStringFromSelector(newSelecotr);
-        NSLog(@"class addMethod fail : %@，%@",cls,str);
+        CJLNSLog(@"class addMethod fail : %@，%@",cls,str);
         return NO;
     }
     
@@ -206,6 +206,7 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, char *returnT
             originMethod_IMP(target,@selector(forwardInvocation:),invocation);
         }
         if (_CJDeep == -1) {
+            CJLNSLog(@"\n");
             [logger() flushAllocationStack:@"\n"];
         }
     }));
@@ -294,31 +295,64 @@ BOOL shouldInterceptMessage(Class cls, SEL selector) {
     NSArray *hookClassMethodList = [_hookClassMethodDic objectForKey:hookClassName];
     NSMutableArray *methodList = [NSMutableArray arrayWithArray:hookClassMethodList];
     
+    //属性的 set 与 get 方法不hook
+    NSMutableArray *propertyMethodList = [NSMutableArray array];
+    unsigned int propertyCount = 0;
+    objc_property_t *properties = class_copyPropertyList(hookClass, &propertyCount);
+    for (int i = 0; i < propertyCount; i++) {
+        objc_property_t property = properties[i];
+        NSString *propertyName = [[NSString alloc]initWithCString:property_getName(property) encoding:NSUTF8StringEncoding];
+        [propertyMethodList addObject:propertyName];
+        
+        NSString *firstCharacter = [propertyName substringToIndex:1];
+        firstCharacter = [firstCharacter uppercaseString];
+        NSString *endCharacter = [propertyName substringFromIndex:1];
+        NSMutableString *propertySetName = [[NSMutableString alloc]initWithString:@"set"];
+        [propertySetName appendString:firstCharacter];
+        [propertySetName appendString:endCharacter];
+        [propertySetName appendString:@":"];
+        [propertyMethodList addObject:propertySetName];
+    }
+    
+    
     unsigned int outCount;
     Method *methods = class_copyMethodList(hookClass,&outCount);
     
     for (int i = 0; i < outCount; i ++) {
         Method tempMethod = *(methods + i);
         SEL selector = method_getName(tempMethod);
-        char *returnType = method_copyReturnType(tempMethod);
         
-        if (forwardMsg) {
-            /*
-             * 方案一：利用消息转发，hook forwardInvocation: 方法
-             */
-            BOOL canHook = enableHook(tempMethod, returnType);
-            if (canHook) {
-                forwardInvocationReplaceMethod(hookClass, selector, returnType, options);
+        BOOL needHook = YES;
+        for (NSString *selStr in propertyMethodList) {
+            SEL propertySel = NSSelectorFromString(selStr);
+            if (selector == propertySel) {
+                needHook = NO;
+                break;
             }
-        }else{
-            /*
-             * 方案二：hook每一个方法
-             */
-            cjlHookMethod(hookClass, selector, returnType);
         }
-        free(returnType);
         
-        [methodList addObject:NSStringFromSelector(selector)];
+        if (needHook) {
+            char *returnType = method_copyReturnType(tempMethod);
+            
+            if (forwardMsg) {
+                /*
+                 * 方案一：利用消息转发，hook forwardInvocation: 方法
+                 */
+                BOOL canHook = enableHook(tempMethod, returnType);
+                if (canHook) {
+                    forwardInvocationReplaceMethod(hookClass, selector, returnType, options);
+                }
+            }else{
+                /*
+                 * 方案二：hook每一个方法
+                 */
+                cjlHookMethod(hookClass, selector, returnType);
+            }
+            free(returnType);
+            
+            [methodList addObject:NSStringFromSelector(selector)];
+        }
+        
     }
     free(methods);
     

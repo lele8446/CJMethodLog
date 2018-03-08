@@ -95,11 +95,7 @@
 
 - (IBAction)clickManagerTest:(id)sender {
     
-//    [self test];
-    NSInteger i = 0;
-    for (; i<100; i++) {
-        [self clickTestMethod2:nil];
-    }
+    [self test];
 }
 
 + (void)managerTest {

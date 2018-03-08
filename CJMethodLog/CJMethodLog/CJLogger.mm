@@ -59,7 +59,7 @@ private:
         dateFormat.dateFormat = @"yyyyMMdd_HH_mm_ss";
         NSString *dateStr = [dateFormat stringFromDate:[NSDate date]];
         _currentDir = [LibDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@/%@",CJLogDetector,dateStr]];
-//        NSLog(@"log日志目录 = %@",_currentDir);
+        NSLog(@"log日志目录 = %@",_currentDir);
         
         NSString *file = (fileName.length>0)?fileName:[NSString stringWithFormat:@"CJLog_%@.txt",dateStr];
         _normalPath = [_currentDir stringByAppendingPathComponent:file];
