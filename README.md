@@ -18,13 +18,12 @@
     -- <TestViewController>  begin:  +managerTest
     -- <TestViewController>  finish: +managerTest ; time=0.000110
     - <TestViewController>  finish: -clickManagerTest: ; time=0.000416
-    
-* `-` 表示函数调用层级；
-* `<TestViewController>` 表示当前调用类名；
-* `begin` `finish`分别表示函数执行起始阶段（只会在设置了**CJLogMethodTimer**选项的时候出现）；
-* `-clickManagerTest:`表示实例方法，`+managerTest`表示类方法；
-* `time=0.000110`表示函数耗时
-* 后续会补充函数参数以及返回结果说明
+* 最开始的`-` 表示函数调用层级；
+* `<TestViewController>` 表示当前调用函数的类名；
+* `begin:` `finish:` 分别表示函数执行起始阶段（只会在设置了**CJLogMethodTimer**选项的时候出现）；
+* `-clickManagerTest:` 表示实例方法，`+managerTest` 表示类方法；
+* `time=0.000110` 表示函数耗时
+* 之后会补充函数参数以及返回结果说明
 
 ### 使用
 在 `main.m` 文件中设置需要监听的类名配置，理论上任意时刻都可以重设监听配置，但不建议这么做！！因为每次重设监听配置都会修改监听类的methodLists中方法的IMP实现，另外 `main.m`中配置可以确保所有hook类都生效，例如如果你hook的是 `AppDelegate` 类。
