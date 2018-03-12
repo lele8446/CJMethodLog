@@ -13,11 +13,11 @@
 int main(int argc, char * argv[]) {
     @autoreleasepool {
         /*
-         * 方案一：利用消息转发，hook指定类的调用方法
+         * 利用消息转发，hook指定类的调用方法
          */
         [CJMethodLog forwardingClasses:@[
-                                         @"TestViewController",
-                                         @"TestTableViewController"
+                                         @"AppDelegate",
+                                         @"TestViewController"
                                          ]
                             logOptions:CJLogMethodTimer|CJLogMethodArgs
                            logFileName:nil];

@@ -98,6 +98,10 @@
     [self test];
 }
 
+- (void)test {
+    
+}
+
 + (void)managerTest {
     
 }
