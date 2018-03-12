@@ -9,7 +9,7 @@
 ### 示例
 下图展示了根据操作`TestViewController`类各函数的调用情况
 <center>
- <img src="http://oz3eqyeso.bkt.clouddn.com/YCMethodLog.gif" width="100%"/>
+ <img src="http://oz3eqyeso.bkt.clouddn.com/CJMethodLog1.gif" width="100%"/>
 </center>
 
 ### 使用
