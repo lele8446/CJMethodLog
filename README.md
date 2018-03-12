@@ -7,7 +7,7 @@
 3. 一些难以重现bug（非crash）的分析
 
 ### 示例
-下图展示了根据操作`TestViewController`类各函数的调用情况
+下图展示了hook `TestViewController`类之后的函数调用情况
 <center>
  <img src="http://oz3eqyeso.bkt.clouddn.com/CJMethodLog1.gif" width="100%"/>
 </center>
