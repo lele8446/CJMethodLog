@@ -9,7 +9,7 @@
 #import "TestViewController.h"
 
 @interface TestViewController ()
-@property (nonatomic, weak)IBOutlet UILabel *label;
+@property (nonatomic, strong)IBOutlet UILabel *label;
 
 @end
 
@@ -85,21 +85,21 @@
 }
 
 - (IBAction)clickTestMethod1:(id)sender {
+    
     self.label.backgroundColor = [UIColor grayColor];
     self.label.text = @"更改了文字";
 }
 
 - (IBAction)clickTestMethod2:(id)sender {
-    [TestViewController managerTest];
+    [self test:CGRectZero];
 }
 
 - (IBAction)clickManagerTest:(id)sender {
-    
-    [self test];
+    [TestViewController managerTest];
 }
 
-- (void)test {
-    
+- (CGRect)test:(CGRect)rect {
+    return rect;
 }
 
 + (void)managerTest {

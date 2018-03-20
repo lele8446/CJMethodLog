@@ -7,7 +7,6 @@
 //
 
 #import "TestTableViewController.h"
-#import "CJLogger.h"
 
 @interface TestTableViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic, weak) IBOutlet UITableView *tableView;
@@ -48,7 +47,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-
+    
 }
 
 

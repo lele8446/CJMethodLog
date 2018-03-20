@@ -20,12 +20,12 @@ static NSInteger _CJDeep = -1;/*调用方法层级*/
 @interface CJMethodLog (CJMessage)
 
 /**
- 判断是否为结构体参赛
+ 判断是否为结构体类型
 
- @param argumentType 参数类型
+ @param encoding 方法字符串编码
  @return BOOL
  */
-FOUNDATION_EXPORT BOOL isStructType(const char *argumentType);
+FOUNDATION_EXPORT BOOL isStructType(const char *encoding);
 
 /**
  获取结构体参数名称

@@ -13,5 +13,5 @@
 
 + (void)managerTest;
 
-- (void)test;
+- (CGRect)test:(CGRect)rect;
 @end

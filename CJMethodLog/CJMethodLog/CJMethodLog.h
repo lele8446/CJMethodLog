@@ -36,15 +36,27 @@ typedef NS_OPTIONS (NSUInteger, CJLogOptions) {
 @interface CJMethodLog : NSObject
 
 /**
+ * 设置是否打印CJMethodLog的log信息，默认NO（不打印log）
+ * @param value 设置为YES，会输出方法监听的log信息，该值只在 DEBUG 环境有效
+ */
++ (void)setCJLogEnabled:(BOOL)value;
+
+/**
  * 基于消息转发（forwardInvocation:）实现对指定类的函数调用监听
  * 注意！！！所有设置的hook类不能存在继承关系
  *
  * @param classNameList 需要hook的类名
  * @param options       日志选项
- * @param logFileName   日志文件名（可为nil，默认格式：CJLog_yyyyMMdd_HH_mm_ss.txt）
  */
-+ (void)forwardingClasses:(NSArray <NSString *>*)classNameList logOptions:(CJLogOptions)options logFileName:(NSString *)logFileName;
++ (void)forwardingClasses:(NSArray <NSString *>*)classNameList logOptions:(CJLogOptions)options;
 
 
+/**
+ * 获取日志文件
+ *
+ * @param deleteData    获取文件后是否删除数据
+ * @param syncDataBlock 获取文件回调blokc
+ */
++ (void)afterSyncLogData:(BOOL)deleteData finishBlock:(void(^)(NSData *logData))syncDataBlock;
 
 @end

@@ -13,9 +13,8 @@
 
 @implementation CJMethodLog (CJMessage)
 
-FOUNDATION_EXPORT BOOL isStructType(const char *argumentType) {
-    NSString *typeString = [NSString stringWithUTF8String:argumentType];
-    return ([typeString hasPrefix:@"{"] && [typeString hasSuffix:@"}"]);
+FOUNDATION_EXPORT BOOL isStructType(const char *encoding) {
+    return encoding[0] == _C_STRUCT_B;
 }
 
 FOUNDATION_EXPORT NSString *structName(const char *argumentType) {
