@@ -35,24 +35,12 @@ private:
     NSString *_writeLogFilePath;
     NSRecursiveLock *_flushLock;
     NSString *_logFileWriteDir;
+    NSString *_logFileReadDir;
 }
-@property (nonatomic, copy)NSString *logFileReadDir;
 
 @end
 
 @implementation CJLogger
-
-- (NSString *)logFileReadDir {
-    if (!_logFileReadDir) {
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-        NSString *LibDirectory = [paths objectAtIndex:0];
-        _logFileReadDir = [LibDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@/%@",CJLogDetector,CJLogReadDetector]];
-    }
-    if (![[NSFileManager defaultManager] fileExistsAtPath:_logFileReadDir]) {
-        [[NSFileManager defaultManager] createDirectoryAtPath:_logFileReadDir withIntermediateDirectories:YES attributes:nil error:nil];
-    }
-    return _logFileReadDir;
-}
 
 + (CJLogger *)instance {
     static CJLogger *manager = nil;
@@ -69,9 +57,9 @@ private:
         
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
         NSString *LibDirectory = [paths objectAtIndex:0];
-        _logFileWriteDir = [LibDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@/%@",CJLogDetector,CJLogWriteDetector]];
+        _logFileWriteDir = [LibDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@/%@",kCJLogDetector,kCJLogWriteDetector]];
 //        CJLNSLog(@"log日志路径 = %@",_logFileWriteDir);
-        self.logFileReadDir = [LibDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@/%@",CJLogDetector,CJLogReadDetector]];
+        _logFileReadDir = [LibDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@/%@",kCJLogDetector,kCJLogReadDetector]];
         
         NSFileManager *fileManager = [NSFileManager defaultManager];
         if (![fileManager fileExistsAtPath:_logFileWriteDir]) {
@@ -81,7 +69,7 @@ private:
             [fileManager createDirectoryAtPath:_logFileReadDir withIntermediateDirectories:YES attributes:nil error:nil];
         }
         
-        [self moveWriteDataToReadFilePath:NO];
+        [self moveWriteDataToReadFilePathFromStartSyncLog:NO];
         
         if(global_memory_zone == nil){
             global_memory_zone = malloc_create_zone(0, 0);
@@ -90,42 +78,42 @@ private:
         
         if(_stacklogger == NULL){
             _stacklogger = new CJHighSpeedLogger(global_memory_zone, _writeLogFilePath, normal_size);
-            
-            NSDateFormatter *dateFormat = [[NSDateFormatter alloc]init];
-            dateFormat.dateFormat = @"yyyy/MM/dd/ HH:mm:ss";
-            NSString *startDateStr = [dateFormat stringFromDate:[NSDate date]];
-            [self flushAllocationStack:[NSString stringWithFormat:@"+++++++++++++++++++++ %@ Create log file +++++++++++++++++++++\n",startDateStr]];
+            [self flushCustomLog:@"Create a new log file after the application launching"];
         }
     }
     return self;
 }
 
-- (void)moveWriteDataToReadFilePath:(BOOL)startSyncLog {
+- (void)moveWriteDataToReadFilePathFromStartSyncLog:(BOOL)startSyncLog {
     NSArray *tempArray = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:_logFileWriteDir error:nil];
     for (NSString *file in tempArray) {
-        NSError *error;
-        [[NSFileManager defaultManager] moveItemAtPath:[_logFileWriteDir stringByAppendingPathComponent:file] toPath:[self.logFileReadDir stringByAppendingPathComponent:file] error:&error];
-        if (error) {
-            CJLNSLog(@"CJMethodLog: Failed to move log file，error = %@",error);
+        if ([[file pathExtension] isEqualToString:kFileExtension]) {
+            NSError *error = nil;
+            [[NSFileManager defaultManager] moveItemAtPath:[_logFileWriteDir stringByAppendingPathComponent:file] toPath:[_logFileReadDir stringByAppendingPathComponent:file] error:&error];
+            if (error) {
+                CJLNSLog(@"CJMethodLog: Failed to move log file，error = %@",error);
+            }
         }
     }
-    NSString *logFileName = [NSString stringWithFormat:@"%f.txt",CFAbsoluteTimeGetCurrent()];
+    NSString *logFileName = [NSString stringWithFormat:@"%f.%@",CFAbsoluteTimeGetCurrent(),kFileExtension];
     _writeLogFilePath = [_logFileWriteDir stringByAppendingPathComponent:logFileName];
     
     if (![[NSFileManager defaultManager] fileExistsAtPath:_writeLogFilePath]) {
         [[NSFileManager defaultManager] createFileAtPath:_writeLogFilePath contents:nil attributes:nil];
         if (startSyncLog) {
             _stacklogger = new CJHighSpeedLogger(global_memory_zone, _writeLogFilePath, normal_size);
+            
+//            [self flushCustomLog:@"Create a new log file after sync log data"];
+//            [self flushAllocationStack:@"\n"];
         }
     }
 }
 
-- (void)startSyncLog{
+- (void)flushCustomLog:(NSString *)log {
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc]init];
     dateFormat.dateFormat = @"yyyy/MM/dd/ HH:mm:ss";
     NSString *startDateStr = [dateFormat stringFromDate:[NSDate date]];
-    [self flushAllocationStack:[NSString stringWithFormat:@"+++++++++++++++++++++ %@ Start sync log data +++++++++++++++++++++\n",startDateStr]];
-    [self flushAllocationStack:@"\n"];
+    [self flushAllocationStack:[NSString stringWithFormat:@"+++++++++++++++++++++ %@ %@ +++++++++++++++++++++\n",startDateStr,log]];
 }
 
 /**
@@ -144,45 +132,55 @@ private:
     _stacklogger->syncLogger();
 }
 
-- (void)afterSyncLogData:(BOOL)deleteData finishBlock:(void(^)(NSData *logData))syncDataBlock {
+- (void)syncLogData:(void(^)(NSData *logData))finishBlock {
+    
+    //新建一个空的文件，用来保存需要同步的所有的日志信息
+    NSString *allLogFileName = [NSString stringWithFormat:@"%f.%@",CFAbsoluteTimeGetCurrent(),kFileExtension];
+    NSString *allLogFilePath = [_logFileReadDir stringByAppendingPathComponent:allLogFileName];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:allLogFilePath]) {
+        [[NSFileManager defaultManager] createFileAtPath:allLogFilePath contents:nil attributes:nil];
+    }
     
     [_flushLock lock];
     _stacklogger->syncLogger();
-    [self startSyncLog];
-    [self moveWriteDataToReadFilePath:YES];
+    [self flushCustomLog:@"Start sync log data"];
+    [self flushAllocationStack:@"\n"];
+    [self moveWriteDataToReadFilePathFromStartSyncLog:YES];
     [_flushLock unlock];
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSArray *readArray = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:_logFileReadDir error:nil];
-        NSMutableData *allData = [[NSMutableData alloc] init];
-        for (NSString *file in readArray) {
-            if ([[file pathExtension] isEqualToString:@"txt"]) {
-                NSString *filePath = [_logFileReadDir stringByAppendingPathComponent:file];
-                NSData *data = [NSData dataWithContentsOfFile:filePath];
-                [allData appendData:data];
-            }
+    NSArray *readArray = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:_logFileReadDir error:nil];
+    NSMutableData *allData = [[NSMutableData alloc] init];
+    for (NSString *file in readArray) {
+        if (![file isEqualToString:allLogFileName] && [[file pathExtension] isEqualToString:kFileExtension]) {
+            NSString *filePath = [_logFileReadDir stringByAppendingPathComponent:file];
+            NSData *data = [NSData dataWithContentsOfFile:filePath];
+            [allData appendData:data];
+            [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
         }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (syncDataBlock) {
-                syncDataBlock([allData copy]);
-            }
-        });
-        
-        [[NSFileManager defaultManager] removeItemAtPath:_logFileReadDir error:nil];
-        if (!deleteData) {
-            NSString *logFileName = [NSString stringWithFormat:@"%f.txt",CFAbsoluteTimeGetCurrent()];
-            NSString *logFilePath = [self.logFileReadDir stringByAppendingPathComponent:logFileName];
-            if (![[NSFileManager defaultManager] fileExistsAtPath:logFilePath]) {
-                BOOL res =  [[NSFileManager defaultManager] createFileAtPath:logFilePath contents:nil attributes:nil];
-                res = [allData writeToFile:logFilePath atomically:YES];
-                if (!res) {
-                    CJLNSLog(@"CJMethodLog: After sync log data, failed to write log data");
-                }
-            }
-        }
-    });
+    }
     
+    if (![allData writeToFile:allLogFilePath atomically:YES]) {
+        CJLNSLog(@"CJMethodLog: After sync log data, failed to write log data");
+    }
+    
+    if (finishBlock) {
+        finishBlock([allData copy]);
+    }
+}
+
+- (void)clearLogData {
+    NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:_logFileReadDir error:NULL];
+    NSEnumerator *enumerator = [contents objectEnumerator];
+    NSString *filename;
+    while ((filename = [enumerator nextObject])) {
+        if ([[filename pathExtension] isEqualToString:kFileExtension]) {
+            NSError *error = nil;
+            [[NSFileManager defaultManager] removeItemAtPath:[_logFileReadDir stringByAppendingPathComponent:filename] error:NULL];
+            if (error) {
+                CJLNSLog(@"CJMethodLog: Failed to delete log data, error = %@",error);
+            }
+        }
+    }
 }
 
 @end

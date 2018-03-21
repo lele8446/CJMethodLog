@@ -216,16 +216,16 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, CJLogOptions 
 
 #pragma mark - CJMethodLog implementation
 @implementation CJMethodLog
++ (void)syncLogData:(SyncDataBlock)finishBlock {
+    [_logger syncLogData:finishBlock];
+}
 
-+ (void)setCJLogEnabled:(BOOL)value {
++ (void)clearLogData {
+    [_logger clearLogData];
+}
+
++ (void)forwardingClasses:(NSArray <NSString *>*)classNameList logOptions:(CJLogOptions)options logEnabled:(BOOL)value {
     _logEnable = value;
-}
-
-+ (void)afterSyncLogData:(BOOL)deleteData finishBlock:(void(^)(NSData *logData))syncDataBlock {
-    [_logger afterSyncLogData:deleteData finishBlock:syncDataBlock];
-}
-
-+ (void)forwardingClasses:(NSArray <NSString *>*)classNameList logOptions:(CJLogOptions)options {
     [self forwardInvocationCommonInstall:YES];
     for (NSString *className in classNameList) {
         Class hookClass = NSClassFromString(className);

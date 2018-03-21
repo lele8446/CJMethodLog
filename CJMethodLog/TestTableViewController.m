@@ -7,6 +7,7 @@
 //
 
 #import "TestTableViewController.h"
+#import "CJMethodLog.h"
 
 @interface TestTableViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic, weak) IBOutlet UITableView *tableView;
@@ -47,9 +48,11 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+    [CJMethodLog syncLogData:^void(NSData *logData) {
+        NSLog(@"CJMethodLog: logData = %@",@([logData length]));
+        [CJMethodLog clearLogData];
+    }];
 }
-
 
 
 @end

@@ -12,9 +12,10 @@
 #import <Foundation/Foundation.h>
 #import <malloc/malloc.h>
 
-static NSString *CJLogDetector      = @"CJLogDetector";/*沙盒文件夹名称*/
-static NSString *CJLogWriteDetector = @"CJLogWriteDetector";/*写日志文件夹名称*/
-static NSString *CJLogReadDetector  = @"CJLogReadDetector";/*读日志文件夹名称*/
+static NSString *kCJLogDetector      = @"CJLogDetector";/*沙盒文件夹名称*/
+static NSString *kCJLogWriteDetector = @"CJLogWriteDetector";/*写日志文件夹名称*/
+static NSString *kCJLogReadDetector  = @"CJLogReadDetector";/*读日志文件夹名称*/
+static NSString *kFileExtension      = @"txt";/*日志文件格式*/
 
 @interface CJLogger : NSObject
 
@@ -22,9 +23,9 @@ static NSString *CJLogReadDetector  = @"CJLogReadDetector";/*读日志文件夹�
 
 - (void)stopFlush;
 
-- (void)afterSyncLogData:(BOOL)deleteData finishBlock:(void(^)(NSData *logData))syncDataBlock;
+- (void)syncLogData:(void(^)(NSData *logData))finishBlock;
 
-
+- (void)clearLogData;
 @end
 
 #endif /* CJLogger_h */

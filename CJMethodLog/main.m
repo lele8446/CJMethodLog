@@ -16,10 +16,11 @@ int main(int argc, char * argv[]) {
          * 利用消息转发，hook指定类的调用方法
          */
         [CJMethodLog forwardingClasses:@[
-                                         @"AppDelegate",
                                          @"TestViewController",
+                                         @"TestTableViewController",
                                          ]
-                            logOptions:CJLogDefault];
+                            logOptions:CJLogDefault
+                            logEnabled:NO];
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }
 }
