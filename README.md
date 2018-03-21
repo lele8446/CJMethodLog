@@ -9,7 +9,7 @@
 ### 示例
 下图展示了hook `TestViewController`类之后的函数调用情况
 <center>
- <img src="http://oz3eqyeso.bkt.clouddn.com/CJMethodLog1.gif" width="100%"/>
+ <img src="https://upload-images.jianshu.io/upload_images/1429982-7560f633f2727ec3.gif?imageMogr2/auto-orient/strip" width="100%"/>
 </center>
 
 日志格式说明：
@@ -42,7 +42,7 @@
                                              @"TestViewController"
                                              ]
                                 logOptions:CJLogMethodTimer|CJLogMethodArgs
-                               logFileName:nil];
+                                logEnabled:NO];
             return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
         }
     }
@@ -51,7 +51,7 @@
 ### 实现
 `CJMethodLog `调用方式如下：
 
-	 + (void)forwardingClasses:(NSArray <NSString *>*)classNameList logOptions:(CJLogOptions)options logFileName:(NSString *)logFileName;
+	 + (void)forwardingClasses:(NSArray <NSString *>*)classNameList logOptions:(CJLogOptions)options logEnabled:(BOOL)value;
  
 
 #### forwardingClassMethod
