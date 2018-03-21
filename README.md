@@ -38,14 +38,14 @@
              * 利用消息转发，hook指定类的调用方法
              */
             [CJMethodLog forwardingClasses:@[
-                                             @"AppDelegate",
-                                             @"TestViewController"
+                                             @"TestViewController",
                                              ]
-                                logOptions:CJLogMethodTimer|CJLogMethodArgs
-                                logEnabled:NO];
+                                logOptions:CJLogDefault|CJLogMethodTimer
+                                logEnabled:YES];
             return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
         }
     }
+
 
     
 ### 实现
