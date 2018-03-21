@@ -85,5 +85,4 @@
 ### 更多
 * 解决`self` `super` 上下文调用的问题
 * 解决`CJLogMethodArgs`(函数参数) `CJLogMethodReturnValue`(函数返回值) 选项的实现
-* 本地日志输出
 * 欢迎各位大神`star` `issue`，帮忙解决难题
