@@ -39,12 +39,14 @@
 
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    
-//    [CJMethodLog syncLogData:^void(NSData *logData) {
-//        NSLog(@"CJMethodLog: logData = %@",@([logData length]));
-//    }];
-    
+    [CJMethodLog syncLogData:^void(NSData *logData) {
+        NSLog(@"CJMethodLog: logData = %@",@([logData length]));
+        if ([logData length] > 10*1024) {
+            // TODO: 上传到服务器等自定义处理
+            // 删除日志数据
+            [CJMethodLog clearLogData];
+        }
+    }];
 }
 
 

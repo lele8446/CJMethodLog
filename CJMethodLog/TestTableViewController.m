@@ -48,10 +48,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [CJMethodLog syncLogData:^void(NSData *logData) {
-        NSLog(@"CJMethodLog: logData = %@",@([logData length]));
-        [CJMethodLog clearLogData];
-    }];
+    
 }
 
 
