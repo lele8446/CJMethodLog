@@ -98,3 +98,7 @@
 * 解决`self` `super` 上下文调用的问题
 * 解决`CJLogMethodArgs`(函数参数) `CJLogMethodReturnValue`(函数返回值) 选项的实现
 * 欢迎各位大神`star` `issue`，帮忙解决难题
+
+### 相关介绍
+[CJMethodLog（一）Runtime原理：从监控还原APP运行的每一行代码说起](https://www.jianshu.com/p/9838c7d93087)<br>
+[CJMethodLog 二：从监控还原APP运行的每一行代码说起](https://www.jianshu.com/p/f35024d1be05)
