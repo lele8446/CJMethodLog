@@ -45,8 +45,20 @@
             return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
         }
     }
+    
+### 日志数据
+获取日志数据使用`+ (void)syncLogData:(SyncDataBlock)finishBlock` ，你可以根据需要获取。比如这里在app启动的时候获取，判断当数据量大于10*1024的时候上传服务器并删除客户端数据。
 
-
+    - (void)applicationDidBecomeActive:(UIApplication *)application {
+        [CJMethodLog syncLogData:^void(NSData *logData) {
+            NSLog(@"CJMethodLog: logData = %@",@([logData length]));
+            if ([logData length] > 10*1024) {
+                // TODO: 上传到服务器等自定义处理
+                // 删除日志数据
+                [CJMethodLog clearLogData];
+            }
+        }];
+    }
     
 ### 实现
 `CJMethodLog `调用方式如下：
