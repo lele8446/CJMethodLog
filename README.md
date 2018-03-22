@@ -1,7 +1,7 @@
 # CJMethodLog
 
 ### 功能
-Objective-C 函数日志监听系统。
+Objective-C 函数日志监听系统。<br>
 `CJMethodLog` 对于 Objective-C 中的任意类、任意类的任意方法，均可监听其调用日志。
 
 ### 应用场景
