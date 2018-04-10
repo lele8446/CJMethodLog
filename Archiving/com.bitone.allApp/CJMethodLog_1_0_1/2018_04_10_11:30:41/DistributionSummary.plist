@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CJMethodLog.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>armv7</string>
+				<string>arm64</string>
+			</array>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>C08A2CF12948BB6C52D92131A28B61D327F671A9</string>
+				<key>dateExpires</key>
+				<string>2020/9/25</string>
+				<key>type</key>
+				<string>iOS Distribution</string>
+			</dict>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>Q5338JDB3Q.com.bitone.allApp</string>
+				<key>com.apple.developer.team-identifier</key>
+				<string>77MMW6NR5H</string>
+				<key>get-task-allow</key>
+				<false/>
+				<key>keychain-access-groups</key>
+				<array>
+					<string>Q5338JDB3Q.com.bitone.allApp</string>
+				</array>
+			</dict>
+			<key>name</key>
+			<string>CJMethodLog.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>4ad2fa1c-d47a-434d-b451-0dd7605ff46c</string>
+				<key>name</key>
+				<string>crmAppRelease</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>77MMW6NR5H</string>
+				<key>name</key>
+				<string>Beijing Bitauto Interactive Advertising Co., Ltd</string>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>
