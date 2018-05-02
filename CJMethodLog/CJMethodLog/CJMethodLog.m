@@ -154,18 +154,14 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, CJLogOptions 
             [methodlog appendFormat:@" <%@> ",targetClass];
             
             CFTimeInterval startTimeInterval = 0;
-            BOOL logTimer = NO;
-            if (options & CJLogMethodTimer) {
-                logTimer = YES;
-                //TODO:参数处理
+            BOOL beginAndEnd = NO;
+            if ((options & CJLogMethodTimer) || (options & CJLogMethodArgs)) {
                 [methodlog appendFormat:@" begin: "];
-                startTimeInterval = CACurrentMediaTime();
+                if (options & CJLogMethodTimer) {
+                    startTimeInterval = CACurrentMediaTime();
+                }
+                beginAndEnd = YES;
             }
-            
-            if (options & CJLogMethodArgs) {
-                //TODO:调用方法拼接参数处理
-            }
-            
             
             if (isInstance) {
                 [methodlog appendFormat:@" -%@",originSelectorStr];
@@ -173,8 +169,24 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, CJLogOptions 
                 [methodlog appendFormat:@" +%@",originSelectorStr];
             }
             
-            if (options & CJLogMethodReturnValue) {
-                //TODO:函数返回值
+            if (options & CJLogMethodArgs) {
+                //TODO:调用方法拼接参数处理
+                NSDictionary *methodArguments = CJMethodArguments(invocation);
+                NSArray *argumentArray = methodArguments[_CJMethodArgsListKey];
+                NSMutableString *argStr = [[NSMutableString alloc]initWithCapacity:3];
+
+                for (NSInteger i = 0; i < argumentArray.count; i++) {
+                    id arg = argumentArray[i];
+                    if (i == 0) {
+                        [argStr appendFormat:@" ; args=[ argIndex:%@ argValue:%@",@(i),[arg description]];
+                    }else{
+                        [argStr appendFormat:@", argIndex:%@ argValue:%@",@(i),[arg description]];
+                    }
+                }
+                if (argumentArray.count > 0) {
+                    [argStr appendString:@" ]"];
+                }
+                [methodlog appendString:argStr];
             }
             
             if (_logEnable) {
@@ -186,10 +198,19 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, CJLogOptions 
             [invocation setTarget:target];            
             [invocation invoke];
             
-            if (logTimer) {
+            if (beginAndEnd) {
                 [methodlog setString:[methodlog stringByReplacingOccurrencesOfString:@"begin: " withString:@"finish:"]];
-                CFTimeInterval endTimeInterval = CACurrentMediaTime();
-                [methodlog appendFormat:@" ; time=%f",(endTimeInterval-startTimeInterval)];
+                
+                if (options & CJLogMethodTimer) {
+                    CFTimeInterval endTimeInterval = CACurrentMediaTime();
+                    [methodlog appendFormat:@" ; time=%f",(endTimeInterval-startTimeInterval)];
+                }
+                
+                if (options & CJLogMethodReturnValue) {
+                    id returnValue = getReturnValue(invocation);
+                    [methodlog appendFormat:@" ; return= %@",[returnValue description]];
+                }
+                
                 if (_logEnable) {
                     CJLNSLog(@"%@",methodlog);
                 }
@@ -233,7 +254,9 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, CJLogOptions 
     }
 }
 
-+ (void)hookClasses:(NSArray <NSString *>*)classNameList logOptions:(CJLogOptions)options {
+// 直接hook每一个方法
++ (void)hookClasses:(NSArray <NSString *>*)classNameList logOptions:(CJLogOptions)options logEnabled:(BOOL)value {
+    _logEnable = value;
     [self forwardInvocationCommonInstall:NO];
     for (NSString *className in classNameList) {
         Class hookClass = NSClassFromString(className);
@@ -345,12 +368,12 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, CJLogOptions 
                     forwardInvocationReplaceMethod(hookClass, selector, options);
                 }
             }else{
-                char *returnType = method_copyReturnType(tempMethod);
-                /*
-                 * 方案二：hook每一个方法
-                 */
-                cjlHookMethod(hookClass, selector, returnType);
-                free(returnType);
+//                char *returnType = method_copyReturnType(tempMethod);
+//                /*
+//                 * 方案二：hook每一个方法（未实现）
+//                 */
+//                cjlHookMethod(hookClass, selector, returnType);
+//                free(returnType);
             }
             
             [methodList addObject:NSStringFromSelector(selector)];

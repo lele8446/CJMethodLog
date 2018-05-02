@@ -49,107 +49,120 @@ BOOL isUIOffset         (const char *type) {return [structName(type) isEqualToSt
 BOOL isUIEdgeInsets     (const char *type) {return [structName(type) isEqualToString:@"UIEdgeInsets"];}
 BOOL isCGAffineTransform(const char *type) {return [structName(type) isEqualToString:@"CGAffineTransform"];}
 
-//获取方法参数
-FOUNDATION_EXPORT BOOL setMethodArguments(va_list argList,NSInvocation *invocation,NSInteger index, char *argumentType) {
-    
-    if (isStructType(argumentType)) {
-        
-#define SET_STRUCT_ARGUMENT(_type) \
-if (is##_type(argumentType)) {\
-_type value = va_arg(argList, _type);\
-[invocation setArgument:&value atIndex:index];\
-return YES;\
-}\
+/**
+ 获取调用方法的参数
 
-        SET_STRUCT_ARGUMENT(CGRect)
-        else SET_STRUCT_ARGUMENT(CGPoint)
-            else SET_STRUCT_ARGUMENT(CGSize)
-                else SET_STRUCT_ARGUMENT(CGVector)
-                    else SET_STRUCT_ARGUMENT(NSRange)
-                        else SET_STRUCT_ARGUMENT(UIOffset)
-                            else SET_STRUCT_ARGUMENT(UIEdgeInsets)
-                                else SET_STRUCT_ARGUMENT(CGAffineTransform)
-                                    else {
-                                        CJLNSLog(@"不能识别的结构体参数:%s",argumentType);
-                                        return NO;
-                                    }
+ @param invocation 调用方法的NSInvocation实例
+ @return 方法参数结果
+ */
+FOUNDATION_EXPORT NSDictionary *CJMethodArguments(NSInvocation *invocation) {
+    NSMethodSignature *methodSignature = [invocation methodSignature];
+//    NSMutableArray *argList = (methodSignature.numberOfArguments > 2 ? [NSMutableArray array] : @[]);
+    NSMutableArray *argList = [NSMutableArray array];
+    BOOL getSuccess = YES;
+    
+    for (NSUInteger i = 2; i < methodSignature.numberOfArguments; i++) {
+        const char *argumentType = [methodSignature getArgumentTypeAtIndex:i];
+        id arg = nil;
         
+        if (isStructType(argumentType)) {
+            #define GET_STRUCT_ARGUMENT(_type)\
+                if (is##_type(argumentType)) {\
+                    _type arg_temp;\
+                    [invocation getArgument:&arg_temp atIndex:i];\
+                    arg = NSStringFrom##_type(arg_temp);\
+                }
+            
+            GET_STRUCT_ARGUMENT(CGRect)
+            else GET_STRUCT_ARGUMENT(CGPoint)
+            else GET_STRUCT_ARGUMENT(CGSize)
+            else GET_STRUCT_ARGUMENT(CGVector)
+            else GET_STRUCT_ARGUMENT(UIOffset)
+            else GET_STRUCT_ARGUMENT(UIEdgeInsets)
+            else GET_STRUCT_ARGUMENT(CGAffineTransform)
+                
+            if (arg == nil) {
+                arg = @"{unknown struct}";
+                if (getSuccess) {
+                    getSuccess = NO;
+                }
+            }
+        }
+        
+        #define GET_ARGUMENT(_type)\
+            if (0 == strcmp(argumentType, @encode(_type))) {\
+                _type arg_temp;\
+                [invocation getArgument:&arg_temp atIndex:i];\
+                arg = @(arg_temp);\
+            }
+        else GET_ARGUMENT(char)
+        else GET_ARGUMENT(int)
+        else GET_ARGUMENT(short)
+        else GET_ARGUMENT(long)
+        else GET_ARGUMENT(long long)
+        else GET_ARGUMENT(unsigned char)
+        else GET_ARGUMENT(unsigned int)
+        else GET_ARGUMENT(unsigned short)
+        else GET_ARGUMENT(unsigned long)
+        else GET_ARGUMENT(unsigned long long)
+        else GET_ARGUMENT(float)
+        else GET_ARGUMENT(double)
+        else GET_ARGUMENT(BOOL)
+        else if (0 == strcmp(argumentType, @encode(id))) {
+            __unsafe_unretained id arg_temp;
+            [invocation getArgument:&arg_temp atIndex:i];
+            arg = arg_temp;
+        }
+        else if (0 == strcmp(argumentType, @encode(SEL))) {
+            SEL arg_temp;
+            [invocation getArgument:&arg_temp atIndex:i];
+            arg = NSStringFromSelector(arg_temp);
+        }
+        else if (0 == strcmp(argumentType, @encode(char *))) {
+            char *arg_temp;
+            [invocation getArgument:&arg_temp atIndex:i];
+            arg = [NSString stringWithUTF8String:arg_temp];
+        }
+        else if (0 == strcmp(argumentType, @encode(void *))) {
+            void *arg_temp;
+            [invocation getArgument:&arg_temp atIndex:i];
+            arg = (__bridge id _Nonnull)arg_temp;
+        }
+        else if (0 == strcmp(argumentType, @encode(Class))) {
+            Class arg_temp;
+            [invocation getArgument:&arg_temp atIndex:i];
+            arg = arg_temp;
+        }
+        
+        if (!arg) {
+            arg = @"unknown argument";
+            if (getSuccess) {
+                getSuccess = NO;
+            }
+        }
+        [argList addObject:arg];
     }
-    else {
-        
-#define SET_ARGUMENT(_type) \
-if(strcmp(@encode(_type), argumentType) == 0) \
-{ \
-_type value = va_arg(argList, _type);\
-[invocation setArgument:&value atIndex:index];\
-return YES;\
-}
-        
-        SET_ARGUMENT(char)
-        else SET_ARGUMENT(unsigned char)
-            else SET_ARGUMENT(short)
-                else SET_ARGUMENT(unsigned short)
-                    else SET_ARGUMENT(int)
-                        else SET_ARGUMENT(unsigned int)
-                            else SET_ARGUMENT(long)
-                                else SET_ARGUMENT(unsigned long)
-                                    else SET_ARGUMENT(long long)
-                                        else SET_ARGUMENT(unsigned long long)
-                                            else SET_ARGUMENT(float)
-                                                else SET_ARGUMENT(double)
-                                                    else SET_ARGUMENT(BOOL)
-                                                        else SET_ARGUMENT(id)
-                                                            else SET_ARGUMENT(SEL)
-                                                                else SET_ARGUMENT(char *)
-                                                                    else SET_ARGUMENT(void *)
-                                                                        else SET_ARGUMENT(Class)
-                                                                            else {
-                                                                                CJLNSLog(@"未知参数:%s",argumentType);
-                                                                                return NO;
-                                                                            }
-    }
+    return @{_CJMethodArgsResult:@(getSuccess),_CJMethodArgsListKey:argList};
 }
 
-FOUNDATION_EXPORT NSInvocation *cjlMethodInvocation(Class cls, SEL originSelector, id target) {
-    NSString *originSelectorStr = NSStringFromSelector(originSelector);
-    SEL newSelecotr = createNewSelector(originSelector);
-    
-    NSMethodSignature *signature = [cls instanceMethodSignatureForSelector:originSelector];
-    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-    invocation.target = target;
-    invocation.selector = newSelecotr;
-    
-    NSString *targetDescription = [target description];
-    BOOL isInstance = isInstanceType(targetDescription)?YES:NO;
-    Class targetClass = isInstance?[target class]:object_getClass(target);
-    _CJDeep ++;
-    NSMutableString *methodlog = [[NSMutableString alloc]initWithCapacity:3];
-    for (NSInteger deepLevel = 0; deepLevel <= _CJDeep; deepLevel ++) {
-        [methodlog appendString:@"-"];
-    }
-    if (isInstance) {
-        [methodlog appendFormat:@" %s: -%@",class_getName(targetClass),originSelectorStr];
-    }else{
-        [methodlog appendFormat:@" %s: +%@",class_getName(targetClass),originSelectorStr];
-    }
-    CJLNSLog(@"%@",methodlog);
-    
-    return invocation;
-}
+/**
+ 获取方法返回值
 
-//获取方法返回值
-id getReturnValue(NSInvocation *invocation){
+ @param invocation 调用方法的NSInvocation实例
+ @return 返回结果
+ */
+FOUNDATION_EXPORT id getReturnValue(NSInvocation *invocation) {
     const char *returnType = invocation.methodSignature.methodReturnType;
     if (returnType[0] == 'r') {
         returnType++;
     }
-#define WRAP_GET_VALUE(type) \
-do { \
-type val = 0; \
-[invocation getReturnValue:&val]; \
-CJLNSLog(@"%@",@(val));\
-return @(val); \
-} while (0)
+    #define WRAP_GET_VALUE(type) \
+    do { \
+        type val = 0; \
+        [invocation getReturnValue:&val]; \
+        CJLNSLog(@"%@",@(val));\
+        return @(val); \
+    } while (0)
     if (strcmp(returnType, @encode(id)) == 0 || strcmp(returnType, @encode(Class)) == 0 || strcmp(returnType, @encode(void (^)(void))) == 0) {
         __autoreleasing id returnObj;
         [invocation getReturnValue:&returnObj];
@@ -195,6 +208,33 @@ return @(val); \
     return nil;
 }
 
+FOUNDATION_EXPORT NSInvocation *cjlMethodInvocation(Class cls, SEL originSelector, id target) {
+    NSString *originSelectorStr = NSStringFromSelector(originSelector);
+    SEL newSelecotr = createNewSelector(originSelector);
+    
+    NSMethodSignature *signature = [cls instanceMethodSignatureForSelector:originSelector];
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+    invocation.target = target;
+    invocation.selector = newSelecotr;
+    
+    BOOL isInstance = isInstanceType(cls)?YES:NO;
+    Class targetClass = isInstance?[target class]:object_getClass(target);
+    _CJDeep ++;
+    NSMutableString *methodlog = [[NSMutableString alloc]initWithCapacity:3];
+    for (NSInteger deepLevel = 0; deepLevel <= _CJDeep; deepLevel ++) {
+        [methodlog appendString:@"-"];
+    }
+    if (isInstance) {
+        [methodlog appendFormat:@" %s: -%@",class_getName(targetClass),originSelectorStr];
+    }else{
+        [methodlog appendFormat:@" %s: +%@",class_getName(targetClass),originSelectorStr];
+    }
+    CJLNSLog(@"%@",methodlog);
+    
+    return invocation;
+}
+
+
 FOUNDATION_EXPORT BOOL cjlHookMethod(Class cls, SEL originSelector, char *returnType) {
     Method originMethod = class_getInstanceMethod(cls, originSelector);
     if (originMethod == nil) {
@@ -213,35 +253,23 @@ FOUNDATION_EXPORT BOOL cjlHookMethod(Class cls, SEL originSelector, char *return
         return NO;
     }
     
+    __block BOOL result = YES;
     // 无返回值的方法
     if (strcmp(returnType, @encode(void)) == 0) {
         
         class_replaceMethod(cls, originSelector, imp_implementationWithBlock(^(id target, ...){
             
             NSInvocation *invocation = cjlMethodInvocation(cls,originSelector,target);
-            //参数类型数组
-            NSMutableArray *argumentTypeArray = [NSMutableArray arrayWithCapacity:3];
             
-            Method originMethod = class_getInstanceMethod(cls, originSelector);
-            NSInteger argumentsNum = method_getNumberOfArguments(originMethod);
-            for(int k = 2 ; k < argumentsNum; k ++) {
-                char argument[250];
-                memset(argument, 0, sizeof(argument));
-                method_getArgumentType(originMethod, k, argument, sizeof(argument));
-                NSString *argumentString = [NSString stringWithUTF8String:argument];
-                [argumentTypeArray addObject:argumentString];
-            }
+            //参数数组
+            NSDictionary *methodArguments = CJMethodArguments(invocation);
+            result = [methodArguments[_CJMethodArgsResult] boolValue];
+            NSArray *argumentArray = methodArguments[_CJMethodArgsListKey];
             
-            int index = 2;
-            va_list argumentList;
-            va_start(argumentList, target);
-            while (index < argumentsNum) {
-                NSString *argumentType = argumentTypeArray[index-2];
-                char *typeChar = [argumentType cStringUsingEncoding:NSUTF8StringEncoding];
-                BOOL argumentSet = setMethodArguments(argumentList, invocation, index, typeChar);
-                index ++;
+            for (NSInteger i = 0; i < argumentArray.count; i++) {
+                id arg = argumentArray[i];
+               [invocation setArgument:&arg atIndex:i];
             }
-            va_end(argumentList);
             
             [invocation invokeWithTarget:target];
             _CJDeep --;
@@ -253,49 +281,33 @@ FOUNDATION_EXPORT BOOL cjlHookMethod(Class cls, SEL originSelector, char *return
         }), originTypes);
         
     }else{
-        
-        // TODO: 有返回值的方法
-        // 暂未处理
-        //        class_replaceMethod(cls, originSelector, originIMP, originTypes);
-        //        method_setImplementation(originMethod, originIMP);
-        
-        //        class_replaceMethod(cls, originSelector, imp_implementationWithBlock(^(id target, ...){
-        //
-        //            NSInvocation *invocation = cjlMethodInvocation(cls,originSelector,target);
-        //            //参数类型数组
-        //            NSMutableArray *argumentTypeArray = [NSMutableArray arrayWithCapacity:3];
-        //
-        //            Method originMethod = class_getInstanceMethod(cls, originSelector);
-        //            NSInteger argumentsNum = method_getNumberOfArguments(originMethod);
-        //            for(int k = 2 ; k < argumentsNum; k ++) {
-        //                char argument[250];
-        //                memset(argument, 0, sizeof(argument));
-        //                method_getArgumentType(originMethod, k, argument, sizeof(argument));
-        //                NSString *argumentString = [NSString stringWithUTF8String:argument];
-        //                [argumentTypeArray addObject:argumentString];
-        //            }
-        //
-        //            int index = 2;
-        //            va_list argumentList;
-        //            va_start(argumentList, target);
-        //            while (index < argumentsNum) {
-        //                NSString *argumentType = argumentTypeArray[index-2];
-        //                char *typeChar = [argumentType cStringUsingEncoding:NSUTF8StringEncoding];
-        //                BOOL argumentSet = setMethodArguments(argumentList, invocation, index, typeChar);
-        //                index ++;
-        //            }
-        //            va_end(argumentList);
-        //
-        //            [invocation invokeWithTarget:target];
-        //            _deep --;
-        //
-        //            if (_deep == -1) {
-        //                CJLNSLog(@"\n");
-        //            }
-        //            return getReturnValue(invocation);
-        //        }), originTypes);
+//        class_replaceMethod(cls, originSelector, imp_implementationWithBlock(^(id target, ...){
+//            
+//            NSInvocation *invocation = cjlMethodInvocation(cls,originSelector,target);
+//            
+//            //参数数组
+//            NSDictionary *methodArguments = CJMethodArguments(invocation);
+//            result = [methodArguments[_CJMethodArgsResult] boolValue];
+//            NSArray *argumentArray = methodArguments[_CJMethodArgsListKey];
+//            
+//            for (NSInteger i = 0; i < argumentArray.count; i++) {
+//                id arg = argumentArray[i];
+//                [invocation setArgument:&arg atIndex:i];
+//            }
+//            
+//            [invocation invokeWithTarget:target];
+//            _CJDeep --;
+//            
+//            if (_CJDeep == -1) {
+//                CJLNSLog(@"\n");
+//            }
+//            
+//            id returnValue = getReturnValue(invocation);
+//            return returnValue;
+//            
+//        }), originTypes);
     }
-    return YES;
+    return result;
 }
 
 @end

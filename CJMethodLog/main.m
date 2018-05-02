@@ -17,8 +17,9 @@ int main(int argc, char * argv[]) {
          */
         [CJMethodLog forwardingClasses:@[
                                          @"TestViewController",
+                                         @"TestTableViewController",
                                          ]
-                            logOptions:CJLogDefault
+                            logOptions:CJLogDefault|CJLogMethodReturnValue|CJLogMethodTimer|CJLogMethodArgs
                             logEnabled:YES];
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }

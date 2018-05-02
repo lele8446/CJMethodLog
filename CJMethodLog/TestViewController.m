@@ -99,7 +99,7 @@
 }
 
 - (CGRect)test:(CGRect)rect {
-    return rect;
+    return CGRectMake(2, 7, 199, 3);
 }
 
 + (void)managerTest {

@@ -17,6 +17,9 @@
 static NSString *_CJMethodPrefix = @"cjlMethod_";/*新增方法前缀*/
 static NSInteger _CJDeep = -1;/*调用方法层级*/
 
+static NSString *_CJMethodArgsResult = @"_CJMethodArgsResult";/*获取方法参数是否成功*/
+static NSString *_CJMethodArgsListKey = @"_CJMethodArgsListKey";/*获取到的方法参数列表*/
+
 @interface CJMethodLog (CJMessage)
 
 /**
@@ -62,15 +65,22 @@ FOUNDATION_EXPORT BOOL isInstanceType(Class cls);
 FOUNDATION_EXPORT NSInvocation *cjlMethodInvocation(Class cls, SEL originSelector, id target);
 
 /**
- 设置NSInvocation参数
-
- @param argList 参数列表
- @param invocation invocation实例
- @param index 第index个参数
- @param argumentType 参数类型
- @return 是否设置成功
+ 获取调用方法的参数
+ 
+ @param invocation 调用方法的NSInvocation实例
+ @return 方法参数结果 { _CJMethodArgsResult: @(YES)/@(NO) 是否成功
+                      _CJMethodArgsListKey: @[]         参数数组
+                    }
  */
-FOUNDATION_EXPORT BOOL setMethodArguments(va_list argList,NSInvocation *invocation,NSInteger index, char *argumentType);
+FOUNDATION_EXPORT NSDictionary *CJMethodArguments(NSInvocation *invocation);
+
+/**
+ 获取方法返回值
+ 
+ @param invocation 调用方法的NSInvocation实例
+ @return 返回结果
+ */
+FOUNDATION_EXPORT id getReturnValue(NSInvocation *invocation);
 
 /**
  hook Class 的 originSelector 方法

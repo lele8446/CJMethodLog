@@ -31,12 +31,12 @@ typedef NS_OPTIONS (NSUInteger, CJLogOptions) {
     CJLogMethodTimer = 1<<1,
     
     /**
-     * 函数参数（未实现）
+     * 函数参数
      */
     CJLogMethodArgs = 1<<2,
     
     /**
-     * 函数返回值（未实现）
+     * 函数返回值
      */
     CJLogMethodReturnValue = 1<<3,
 };
@@ -53,7 +53,6 @@ typedef NS_OPTIONS (NSUInteger, CJLogOptions) {
  * @param value         是否打印监听日志，（设置为YES，会输出方法监听的log信息，该值只在 DEBUG 环境有效）
  */
 + (void)forwardingClasses:(NSArray <NSString *>*)classNameList logOptions:(CJLogOptions)options logEnabled:(BOOL)value;
-
 
 /**
  * 获取日志文件
