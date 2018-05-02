@@ -23,7 +23,7 @@ Objective-C 函数日志监听系统。<br>
     - <TestViewController>  finish: -clickManagerTest: ; time=0.000416
 * 最开始的`-` 表示函数调用层级；
 * `<TestViewController>` 表示当前调用函数的类名；
-* `begin:` `finish:` 分别表示函数执行起始阶段（只会在设置了**CJLogMethodTimer**选项的时候出现）；
+* `begin:` `finish:` 分别表示函数执行起始阶段（在设置了**CJLogMethodTimer或者CJLogMethodReturnValue**选项的时候出现）；
 * `-clickManagerTest:` 表示实例方法，`+managerTest` 表示类方法；
 * `time=0.000110` 表示函数耗时
 * 之后会补充函数参数以及返回结果说明
@@ -99,7 +99,6 @@ Objective-C 函数日志监听系统。<br>
 
 ### 更多
 * 解决`self` `super` 上下文调用的问题
-* 解决`CJLogMethodArgs`(函数参数) `CJLogMethodReturnValue`(函数返回值) 选项的实现
 * 欢迎各位大神`star` `issue`，帮忙解决难题
 
 ### 许可证
