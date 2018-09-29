@@ -41,18 +41,37 @@ typedef NS_OPTIONS (NSUInteger, CJLogOptions) {
     CJLogMethodReturnValue = 1<<3,
 };
 
-
 @interface CJMethodLog : NSObject
 
 /**
- * 初始化类名监听配置
+ * hook指定类
  * 注意！！！所有设置的hook类不能存在继承关系
  *
  * @param classNameList 需要hook的类名数组
  * @param options       日志选项
- * @param value         是否打印监听日志，（设置为YES，会输出方法监听的log信息，该值只在 DEBUG 环境有效）
+ * @param value         是否打印监听日志，全局有效（设置为YES，会输出方法监听的log信息，该值只在 DEBUG 环境有效）
  */
 + (void)forwardingClasses:(NSArray <NSString *>*)classNameList logOptions:(CJLogOptions)options logEnabled:(BOOL)value;
+
+/**
+ * hook指定类的指定实例方法
+ *
+ * @param className  需要hook的类
+ * @param methodList 指定方法列表
+ * @param options    日志选项
+ * @param value      是否打印监听日志，全局有效（设置为YES，会输出方法监听的log信息，该值只在 DEBUG 环境有效）
+ */
++ (void)forwardingInstanceMethodWithClass:(NSString *)className methodList:(NSArray <NSString *>*)methodList logOptions:(CJLogOptions)options logEnabled:(BOOL)value;
+
+/**
+ * hook指定类的指定类方法
+ *
+ * @param className  需要hook的类
+ * @param methodList 指定方法列表
+ * @param options    日志选项
+ * @param value      是否打印监听日志，全局有效（设置为YES，会输出方法监听的log信息，该值只在 DEBUG 环境有效）
+ */
++ (void)forwardingClassMethodWithClass:(NSString *)className methodList:(NSArray <NSString *>*)methodList logOptions:(CJLogOptions)options logEnabled:(BOOL)value;
 
 /**
  * 获取日志文件

@@ -17,10 +17,22 @@ int main(int argc, char * argv[]) {
          */
         [CJMethodLog forwardingClasses:@[
                                          @"TestViewController",
-                                         @"TestTableViewController",
                                          ]
-                            logOptions:CJLogDefault|CJLogMethodReturnValue|CJLogMethodTimer|CJLogMethodArgs
+                            logOptions:CJLogDefault
                             logEnabled:YES];
+        
+        //hook指定类的指定方法
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+        [CJMethodLog forwardingInstanceMethodWithClass:@"TestTableViewController"
+                                            methodList:@[
+                                                         NSStringFromSelector(@selector(viewDidLoad)),
+NSStringFromSelector(@selector(tableView:didSelectRowAtIndexPath:)),
+                                                         ]
+                                            logOptions:CJLogDefault
+                                            logEnabled:YES];
+#pragma clang diagnostic pop
+        
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }
 }

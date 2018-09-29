@@ -10,6 +10,7 @@
 #import "ViewController.h"
 
 @interface TestViewController : ViewController
+@property (nonatomic, copy) void(^disappearBlock)(void);
 
 + (void)managerTest;
 

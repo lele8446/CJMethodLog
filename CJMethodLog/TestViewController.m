@@ -78,6 +78,9 @@
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
+    if (self.disappearBlock) {
+        self.disappearBlock();
+    }
 }
 
 - (void)refreshUI {

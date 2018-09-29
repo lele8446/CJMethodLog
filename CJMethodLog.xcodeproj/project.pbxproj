@@ -50,10 +50,10 @@
 		B4591253201F148500B9808D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B4591255201F148500B9808D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B4591256201F148500B9808D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		B459125C201F148600B9808D /* CJMethodLogTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CJMethodLogTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B459125C201F148600B9808D /* CJMethodLogTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = CJMethodLogTests.xctest; path = CJMethodLog.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4591260201F148600B9808D /* CJMethodLogTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CJMethodLogTests.m; sourceTree = "<group>"; };
 		B4591262201F148600B9808D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B4591267201F148600B9808D /* CJMethodLogUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CJMethodLogUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4591267201F148600B9808D /* CJMethodLogUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = CJMethodLogUITests.xctest; path = CJMethodLog.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B459126B201F148600B9808D /* CJMethodLogUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CJMethodLogUITests.m; sourceTree = "<group>"; };
 		B459126D201F148600B9808D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B459127A201F16C600B9808D /* CJMethodLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CJMethodLog.h; sourceTree = "<group>"; };
@@ -232,16 +232,16 @@
 				TargetAttributes = {
 					B4591243201F148500B9808D = {
 						CreatedOnToolsVersion = 9.2;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 					};
 					B459125B201F148600B9808D = {
 						CreatedOnToolsVersion = 9.2;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 						TestTargetID = B4591243201F148500B9808D;
 					};
 					B4591266201F148600B9808D = {
 						CreatedOnToolsVersion = 9.2;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 						TestTargetID = B4591243201F148500B9808D;
 					};
 				};
@@ -468,16 +468,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 77MMW6NR5H;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F5E4M7J9VC;
 				INFOPLIST_FILE = CJMethodLog/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bitone.allApp;
+				PRODUCT_BUNDLE_IDENTIFIER = Jin.Lian.Test2;
 				PRODUCT_NAME = CJMethodLog;
-				PROVISIONING_PROFILE = "4ad2fa1c-d47a-434d-b451-0dd7605ff46c";
-				PROVISIONING_PROFILE_SPECIFIER = crmAppRelease;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -486,16 +486,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 77MMW6NR5H;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F5E4M7J9VC;
 				INFOPLIST_FILE = CJMethodLog/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bitone.allApp;
+				PRODUCT_BUNDLE_IDENTIFIER = Jin.Lian.Test2;
 				PRODUCT_NAME = CJMethodLog;
-				PROVISIONING_PROFILE = "4ad2fa1c-d47a-434d-b451-0dd7605ff46c";
-				PROVISIONING_PROFILE_SPECIFIER = crmAppRelease;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

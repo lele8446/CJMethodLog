@@ -31,13 +31,6 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, CJLogOptions 
 
 #pragma mark - Function implementation
 
-CJLogger *logger() {
-    if (!_logger) {
-        _logger = [[CJLogger alloc]init];
-    }
-    return _logger;
-}
-
 BOOL inMainBundle(Class hookClass) {
     NSBundle *currentBundle = [NSBundle bundleForClass:hookClass];
     return [currentBundle.bundlePath hasPrefix:[NSBundle mainBundle].bundlePath];
@@ -48,14 +41,20 @@ BOOL haveHookClass(Class hookClass) {
     return ([_hookedClassList containsObject:className]);
 }
 
-BOOL enableHook(Method method) {
+BOOL enableHookSELStr(NSString *SELStr) {
     //若在黑名单中则不处理
-    NSString *selectorName = NSStringFromSelector(method_getName(method));
+    NSString *selectorName = SELStr;
     if (inBlackList(selectorName)) return NO;
     
     if ([selectorName rangeOfString:_CJMethodPrefix].location != NSNotFound) return NO;
     
     return YES;
+}
+
+BOOL enableHook(Method method) {
+    //若在黑名单中则不处理
+    NSString *selectorName = NSStringFromSelector(method_getName(method));
+    return enableHookSELStr(selectorName);
 }
 
 BOOL inBlackList(NSString *methodName) {
@@ -245,6 +244,49 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, CJLogOptions 
     [_logger clearLogData];
 }
 
++ (void)forwardingInstanceMethodWithClass:(NSString *)className methodList:(NSArray <NSString *>*)methodList logOptions:(CJLogOptions)options logEnabled:(BOOL)value {
+    [self forwardingClass:className isInstanceMethod:YES methodList:methodList logOptions:options logEnabled:value];
+}
+
++ (void)forwardingClassMethodWithClass:(NSString *)className methodList:(NSArray <NSString *>*)methodList logOptions:(CJLogOptions)options logEnabled:(BOOL)value {
+    [self forwardingClass:className isInstanceMethod:NO methodList:methodList logOptions:options logEnabled:value];
+}
+
++ (void)forwardingClass:(NSString *)className isInstanceMethod:(BOOL)isInstanceMethod methodList:(NSArray <NSString *>*)methodList logOptions:(CJLogOptions)options logEnabled:(BOOL)value {
+    
+    Class hookClass = NSClassFromString(className);
+    if (!hookClass) return;
+    
+    if (!isInstanceMethod) {
+        hookClass = object_getClass(hookClass);
+        className = NSStringFromClass(hookClass);
+    }
+    
+    
+    _logEnable = value;
+    [self forwardInvocationCommonInstall:NO];
+    
+    // hookClass中已经被hook过的方法
+    NSArray *hookClassMethodList = [_hookClassMethodDic objectForKey:className];
+    NSMutableArray *haveHookMethodList = [NSMutableArray arrayWithArray:hookClassMethodList];
+    
+    for (NSString *selStr in methodList) {
+        
+        if(![haveHookMethodList containsObject:selStr]){
+            SEL selector = NSSelectorFromString(selStr);
+            if (class_respondsToSelector(hookClass, selector)) {
+                BOOL canHook = enableHookSELStr(selStr);
+                if (canHook) {
+                    forwardInvocationReplaceMethod(hookClass, selector, options);
+                    [haveHookMethodList addObject:selStr];
+                }
+            }
+        }
+    }
+    [_hookClassMethodDic setObject:haveHookMethodList forKey:className];
+    
+}
+
 + (void)forwardingClasses:(NSArray <NSString *>*)classNameList logOptions:(CJLogOptions)options logEnabled:(BOOL)value {
     _logEnable = value;
     [self forwardInvocationCommonInstall:YES];
@@ -254,17 +296,7 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, CJLogOptions 
     }
 }
 
-// 直接hook每一个方法
-+ (void)hookClasses:(NSArray <NSString *>*)classNameList logOptions:(CJLogOptions)options logEnabled:(BOOL)value {
-    _logEnable = value;
-    [self forwardInvocationCommonInstall:NO];
-    for (NSString *className in classNameList) {
-        Class hookClass = NSClassFromString(className);
-        [self hookClasses:hookClass forwardMsg:NO fromConfig:YES logOptions:options];
-    }
-}
-
-+ (void)forwardInvocationCommonInstall:(BOOL)forwardInvocation {
++ (void)forwardInvocationCommonInstall:(BOOL)install {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _hookedClassList = [NSMutableArray array];
@@ -273,8 +305,10 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, CJLogOptions 
             _logger = [[CJLogger alloc]init];
         }
     });
-    [_hookedClassList removeAllObjects];
-    [_hookClassMethodDic removeAllObjects];
+    if (install) {
+        [_hookedClassList removeAllObjects];
+        [_hookClassMethodDic removeAllObjects];
+    }
 }
 
 /**
@@ -346,7 +380,7 @@ BOOL forwardInvocationReplaceMethod(Class cls, SEL originSelector, CJLogOptions 
     unsigned int outCount;
     Method *methods = class_copyMethodList(hookClass,&outCount);
     for (int i = 0; i < outCount; i ++) {
-        Method tempMethod = *(methods + i);
+        Method tempMethod = methods[i];
         SEL selector = method_getName(tempMethod);
         
         BOOL needHook = YES;
