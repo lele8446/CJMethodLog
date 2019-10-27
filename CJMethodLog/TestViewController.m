@@ -101,6 +101,10 @@
     [TestViewController managerTest];
 }
 
+- (IBAction)noImplementMethod:(id)sender {
+    [self performSelector:@selector(noImplement) withObject:nil];
+}
+
 - (CGRect)test:(CGRect)rect {
     return CGRectMake(2, 7, 199, 3);
 }
